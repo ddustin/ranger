@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <cstdint>
 
 #include "endian.h"
 #if __BYTE_ORDER != __LITTLE_ENDIAN
