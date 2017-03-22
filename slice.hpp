@@ -33,6 +33,10 @@ namespace {
 		*ptr = value; \
 		if (bigEndian) swapEndian(ptr); \
 	} \
+	template <typename R> \
+	auto operator< (const R& rhs) const { \
+		return std::lexicographical_compare(this->begin(), this->end(), rhs.begin(), rhs.end()); \
+	}
 
 template <typename T>
 struct TypedSlice {
@@ -57,8 +61,6 @@ public:
 		return static_cast<size_t>(this->_end - this->_begin);
 	}
 
-	SERIAL_MIXIN_IMPL
-
 	auto drop (size_t n) const {
 		assert(n <= this->length());
 		return TypedSlice<T>(this->begin() + n, this->end());
@@ -79,10 +81,7 @@ public:
 		return this->_begin[i];
 	}
 
-	template <typename R>
-	auto operator< (const R& rhs) const {
-		return std::lexicographical_compare(this->begin(), this->end(), rhs.begin(), rhs.end());
-	}
+	SERIAL_MIXIN_IMPL
 
 	void popFrontN (size_t n) {
 		assert(n <= this->length());
