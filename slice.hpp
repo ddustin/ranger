@@ -18,7 +18,7 @@ namespace {
 	}
 }
 
-#define SLICE_MIXIN_IMPL \
+#define SERIAL_MIXIN_IMPL \
 	template <typename Y = T> \
 	auto peek (const size_t offset = 0) const { \
 		static_assert(sizeof(Y) % sizeof(T) == 0); \
@@ -33,18 +33,6 @@ namespace {
 		*ptr = value; \
 		if (bigEndian) swapEndian(ptr); \
 	} \
-	auto& operator[] (const size_t i) { \
-		assert(i < this->length()); \
-		return this->begin()[i]; \
-	} \
-	auto operator[] (const size_t i) const { \
-		assert(i < this->length()); \
-		return this->begin()[i]; \
-	} \
-	template <typename R> \
-	auto operator< (const R& rhs) const { \
-		return std::lexicographical_compare(this->begin(), this->end(), rhs.begin(), rhs.end()); \
-	}
 
 template <typename T>
 struct TypedSlice {
@@ -55,17 +43,21 @@ private:
 public:
 	TypedSlice () : _begin(nullptr), _end(nullptr) {}
 	TypedSlice (T* begin, T* end) : _begin(begin), _end(end) {
-		assert(this->_begin);
-		assert(this->_end);
+		assert(this->_begin != nullptr);
+		assert(this->_end != nullptr);
 	}
+	template <typename R>
+	TypedSlice (R r) : _begin(r.begin()), _end(r.end()) {}
 
+	auto begin () { return this->_begin; }
+	auto end () { return this->_end; }
 	auto begin () const { return this->_begin; }
 	auto end () const { return this->_end; }
 	auto length () const {
 		return static_cast<size_t>(this->_end - this->_begin);
 	}
 
-	SLICE_MIXIN_IMPL
+	SERIAL_MIXIN_IMPL
 
 	auto drop (size_t n) const {
 		assert(n <= this->length());
@@ -75,6 +67,21 @@ public:
 	auto take (size_t n) const {
 		assert(n <= this->length());
 		return TypedSlice<T>(this->begin(), this->begin() + n);
+	}
+
+	auto& operator[] (const size_t i) {
+		assert(i < this->length());
+		return this->_begin[i];
+	}
+
+	auto operator[] (const size_t i) const {
+		assert(i < this->length());
+		return this->_begin[i];
+	}
+
+	template <typename R>
+	auto operator< (const R& rhs) const {
+		return std::lexicographical_compare(this->begin(), this->end(), rhs.begin(), rhs.end());
 	}
 
 	void popFrontN (size_t n) {
@@ -133,44 +140,72 @@ private:
 	T data[N];
 
 public:
+	auto begin () { return this->data; }
+	auto end () { return this->data + N; }
 	auto begin () const { return this->data; }
 	auto end () const { return this->data + N; }
-
 	auto length () const { return N; };
-	auto drop (size_t n) const { return TypedSlice<T>(this->data, this->data + N).drop(n); }
-	auto take (size_t n) const { return TypedSlice<T>(this->data, this->data + N).take(n); }
 
-	SLICE_MIXIN_IMPL
+	auto drop (size_t n) {
+		return TypedSlice<T>(this->data, this->data + N).drop(n);
+	}
+
+	auto take (size_t n) {
+		return TypedSlice<T>(this->data, this->data + N).take(n);
+	}
+
+	auto& operator[] (const size_t i) {
+		assert(i < N);
+		return this->data[i];
+	}
+
+	auto operator[] (const size_t i) const {
+		assert(i < N);
+		return this->data[i];
+	}
+
+	SERIAL_MIXIN_IMPL
 };
 
 template <typename T>
 struct TypedHeapSlice {
 private:
-	T const* _begin;
-	T const* _end;
+	T* _begin;
+	size_t n;
 
 public:
-	TypedHeapSlice (const size_t n) {
-		this->_begin = new T[n];
-		this->_end = this->_begin + n;
-	}
-
+	TypedHeapSlice (const size_t n) : _begin(new T[n]), n(n) {}
 	~TypedHeapSlice () {
 		delete[] this->_begin;
 	}
 
 	TypedHeapSlice (const TypedHeapSlice&) = delete;
 
+	auto begin () { return this->_begin; }
+	auto end () { return this->_begin + this->n; }
 	auto begin () const { return this->_begin; }
-	auto end () const { return this->_end; }
+	auto end () const { return this->_begin + this->n; }
+	auto length () const { return this->n; }
 
-	auto length () const {
-		return static_cast<size_t>(this->_end - this->_begin);
+	auto drop (size_t m) const {
+		return TypedSlice<T>(this->_begin, this->_begin + this->n).drop(m);
 	}
-	auto drop (size_t n) const { return TypedSlice<T>(this->_begin, this->_end).drop(n); }
-	auto take (size_t n) const { return TypedSlice<T>(this->_begin, this->_end).take(n); }
 
-	SLICE_MIXIN_IMPL
+	auto take (size_t m) const {
+		return TypedSlice<T>(this->_begin, this->_begin + this->n).take(m);
+	}
+
+	auto& operator[] (const size_t i) {
+		assert(i < this->n);
+		return this->_begin[i];
+	}
+
+	auto operator[] (const size_t i) const {
+		assert(i < this->n);
+		return this->_begin[i];
+	}
+
+	SERIAL_MIXIN_IMPL
 };
 
 typedef TypedHeapSlice<uint8_t> HeapSlice;
@@ -180,4 +215,4 @@ using StackSlice = TypedStackSlice<uint8_t, N>;
 
 typedef TypedSlice<uint8_t> Slice;
 
-#undef SLICE_MIXIN_IMPL
+#undef SERIAL_MIXIN_IMPL

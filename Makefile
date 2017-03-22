@@ -13,7 +13,7 @@ test: test/slice
 	./test/slice
 
 clean:
-	$(RM) $(DEPENDENCIES) $(OBJECTS) test/ranger
+	$(RM) $(DEPENDENCIES) $(OBJECTS) test/ranger test/slice
 
 # INFERENCES
 %.o: %.cpp
@@ -24,6 +24,7 @@ clean:
 #	curl https://raw.githubusercontent.com/philsquared/Catch/master/single_include/catch.hpp > test/catch.hpp
 
 test/ranger: $(OBJECTS)
+test/slice: $(OBJECTS)
 	$(CXX) $(OBJECTS) $(LFLAGS) $(OFLAGS) -o $@
 
 -include $(DEPENDENCIES)
