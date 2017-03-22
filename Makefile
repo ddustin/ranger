@@ -4,13 +4,13 @@ IFLAGS=
 LFLAGS=
 OFLAGS=
 
-SOURCES=test/ranger.cpp
+SOURCES=test/slice.cpp test/ranger.cpp
 OBJECTS=$(addsuffix .o, $(basename $(SOURCES)))
 DEPENDENCIES=$(OBJECTS:.o=.d)
 
 # COMMANDS
-test: test/ranger
-	./test/ranger
+test: test/slice
+	./test/slice
 
 clean:
 	$(RM) $(DEPENDENCIES) $(OBJECTS) test/ranger

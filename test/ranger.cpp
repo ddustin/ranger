@@ -23,10 +23,10 @@ int main () {
 // 	std::cout << "Foo isInputRange: " << isInputRange<Foo>() << std::endl;
 // 	std::cout << "Bar isInputRange: " << isInputRange<Bar>() << std::endl;
 
-	std::cout << "Foo hasLength : " << hasLength<Foo>::value << std::endl;
-	std::cout << "Bar hasLength : " << hasLength<Bar>::value << std::endl;
-
-	std::cout << "Bar length : " << lengthOf(Bar()) << std::endl;
+// 	std::cout << "Foo hasLength : " << hasLength<Foo>::value << std::endl;
+// 	std::cout << "Bar hasLength : " << hasLength<Bar>::value << std::endl;
+//
+// 	std::cout << "Bar length : " << lengthOf(Bar()) << std::endl;
 
 	return 0;
 }
