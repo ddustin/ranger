@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cstdint>
+#include <memory>
 
 #include "endian.h"
 #if __BYTE_ORDER != __LITTLE_ENDIAN
@@ -144,14 +145,8 @@ public:
 	auto begin () const { return this->data; }
 	auto end () const { return this->data + N; }
 	auto length () const { return N; };
-
-	auto drop (size_t n) {
-		return TypedSlice<T>(this->data, this->data + N).drop(n);
-	}
-
-	auto take (size_t n) {
-		return TypedSlice<T>(this->data, this->data + N).take(n);
-	}
+	auto drop (size_t m) { return TypedSlice<T>(this->begin(), this->end()).drop(m); }
+	auto take (size_t m) { return TypedSlice<T>(this->begin(), this->end()).take(m); }
 
 	auto& operator[] (const size_t i) {
 		assert(i < N);
@@ -169,30 +164,19 @@ public:
 template <typename T>
 struct TypedHeapSlice {
 private:
-	T* _data;
+	std::unique_ptr<T[]> _data;
 	size_t n;
 
 public:
 	TypedHeapSlice (const size_t n) : _data(new T[n]), n(n) {}
-	~TypedHeapSlice () {
-		delete[] this->_data;
-	}
 
-	TypedHeapSlice (const TypedHeapSlice&) = delete;
-
-	auto begin () { return this->_data; }
-	auto end () { return this->_data + this->n; }
-	auto begin () const { return this->_data; }
-	auto end () const { return this->_data + this->n; }
+	auto begin () { return this->_data.get(); }
+	auto end () { return this->_data.get() + this->n; }
+	auto begin () const { return this->_data.get(); }
+	auto end () const { return this->_data.get() + this->n; }
 	auto length () const { return this->n; }
-
-	auto drop (size_t m) const {
-		return TypedSlice<T>(this->_data, this->_data + this->n).drop(m);
-	}
-
-	auto take (size_t m) const {
-		return TypedSlice<T>(this->_data, this->_data + this->n).take(m);
-	}
+	auto drop (size_t m) { return TypedSlice<T>(this->begin(), this->end()).drop(m); }
+	auto take (size_t m) { return TypedSlice<T>(this->begin(), this->end()).take(m); }
 
 	auto& operator[] (const size_t i) {
 		assert(i < this->n);
