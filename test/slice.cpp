@@ -34,5 +34,10 @@ int main () {
 	assert(f.length() == 50);
 	assert(e.length() == 60);
 
+	auto g = Slice(e);
+	assert(e.length() == g.length());
+	g.popFrontN(30);
+	assert(g.length() == e.length() - 30);
+
 	return 0;
 }

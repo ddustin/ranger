@@ -52,7 +52,7 @@ public:
 		assert(this->_end != nullptr);
 	}
 	template <typename R>
-	TypedSlice (R r) : _begin(r.begin()), _end(r.end()) {}
+	TypedSlice (R& range) : _begin(range.begin()), _end(range.end()) {}
 
 	auto begin () { return this->_begin; }
 	auto end () { return this->_end; }
