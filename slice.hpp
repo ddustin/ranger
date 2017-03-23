@@ -169,39 +169,39 @@ public:
 template <typename T>
 struct TypedHeapSlice {
 private:
-	T* _begin;
+	T* _data;
 	size_t n;
 
 public:
-	TypedHeapSlice (const size_t n) : _begin(new T[n]), n(n) {}
+	TypedHeapSlice (const size_t n) : _data(new T[n]), n(n) {}
 	~TypedHeapSlice () {
-		delete[] this->_begin;
+		delete[] this->_data;
 	}
 
 	TypedHeapSlice (const TypedHeapSlice&) = delete;
 
-	auto begin () { return this->_begin; }
-	auto end () { return this->_begin + this->n; }
-	auto begin () const { return this->_begin; }
-	auto end () const { return this->_begin + this->n; }
+	auto begin () { return this->_data; }
+	auto end () { return this->_data + this->n; }
+	auto begin () const { return this->_data; }
+	auto end () const { return this->_data + this->n; }
 	auto length () const { return this->n; }
 
 	auto drop (size_t m) const {
-		return TypedSlice<T>(this->_begin, this->_begin + this->n).drop(m);
+		return TypedSlice<T>(this->_data, this->_data + this->n).drop(m);
 	}
 
 	auto take (size_t m) const {
-		return TypedSlice<T>(this->_begin, this->_begin + this->n).take(m);
+		return TypedSlice<T>(this->_data, this->_data + this->n).take(m);
 	}
 
 	auto& operator[] (const size_t i) {
 		assert(i < this->n);
-		return this->_begin[i];
+		return this->_data[i];
 	}
 
 	auto operator[] (const size_t i) const {
 		assert(i < this->n);
-		return this->_begin[i];
+		return this->_data[i];
 	}
 
 	SERIAL_MIXIN_IMPL
