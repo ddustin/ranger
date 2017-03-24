@@ -1,3 +1,4 @@
+#include <array>
 #include <cassert>
 #include <iostream>
 
@@ -44,6 +45,11 @@ int main () {
 
 	g.popFrontN(30);
 	assert(g.size() == e.size() - 30);
+
+	Slice(e).assign(g);
+
+	std::array<uint8_t, 32> array;
+	Slice(e).assign(array);
 
 	return 0;
 }

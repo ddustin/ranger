@@ -4,8 +4,8 @@
 #include <algorithm>
 #include <cassert>
 #include <cstdint>
+#include <cstring>
 #include <memory>
-#include <type_traits>
 
 template <typename T>
 struct TypedSlice {
@@ -45,17 +45,10 @@ public:
 	}
 
 	template <typename E>
-	void assign (E e) {
+	void assign (const E& e) {
 		static_assert(std::is_same<T, typename E::value_type>::value);
 		assert(this->size() >= e.size());
 
-		for (size_t i = 0; !e.empty(); e.popFront(), ++i) {
-			(*this)[i] = e.front();
-		}
-	}
-
-	void assign (const TypedSlice<T>& e) {
-		assert(this->size() >= e.size());
 		memcpy(this->begin(), e.begin(), e.size());
 	}
 
