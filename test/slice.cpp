@@ -38,8 +38,8 @@ int main () {
 	auto g = Slice(e);
 	assert(e.size() == g.size());
 
-	serial::put<Slice, uint32_t>(g, 19);
-	const auto i = serial::peek<Slice, uint32_t>(g);
+	serial::put<uint32_t>(g, 19);
+	const auto i = serial::peek<uint32_t>(g);
 	assert(i == 19);
 
 	g.popFrontN(30);

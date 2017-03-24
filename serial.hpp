@@ -18,7 +18,7 @@ namespace {
 }
 
 namespace serial {
-	template <typename R, typename E, bool BE = false>
+	template <typename E, bool BE = false, typename R>
 	auto peek (const R& range) {
 		using T = typename R::value_type;
 
@@ -31,7 +31,7 @@ namespace serial {
 		return value;
 	}
 
-	template <typename R, typename E, bool BE = false>
+	template <typename E, bool BE = false, typename R>
 	void put (R& r, const E e) {
 		using T = typename R::value_type;
 
@@ -43,20 +43,20 @@ namespace serial {
 		if (BE) reverseBytes(ptr);
 	}
 
-	template <typename R, typename E, bool BE = false>
+	template <typename E, bool BE = false, typename R>
 	auto read (R& r) {
 		using T = typename R::value_type;
 
-		const auto e = peek<R, E, BE>(r);
+		const auto e = peek<E, BE>(r);
 		r.popFrontN(sizeof(E) / sizeof(T));
 		return e;
 	}
 
-	template <typename R, typename E, bool BE = false>
+	template <typename E, bool BE = false, typename R>
 	void write (R& r, const E e) {
 		using T = typename R::value_type;
 
-		put<R, E, BE>(r, e);
+		put<E, BE>(r, e);
 		r.popFrontN(sizeof(E) / sizeof(T));
 	}
 }
