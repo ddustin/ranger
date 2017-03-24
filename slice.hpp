@@ -24,7 +24,7 @@ namespace {
 	auto peek (const size_t offset = 0) const { \
 		static_assert(sizeof(Y) % sizeof(T) == 0); \
 		assert(offset + (sizeof(Y) / sizeof(T)) <= this->length()); \
-		return *(reinterpret_cast<Y*>(this->begin() + offset)); \
+		return *(reinterpret_cast<const Y*>(this->begin() + offset)); \
 	} \
 	template <typename Y, bool bigEndian = false> \
 	void put (const Y value, size_t offset = 0) { \

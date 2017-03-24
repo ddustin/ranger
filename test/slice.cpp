@@ -36,6 +36,11 @@ int main () {
 
 	auto g = Slice(e);
 	assert(e.length() == g.length());
+
+	g.put<uint32_t>(19);
+	const auto i = g.peek<uint32_t>();
+	assert(i == 19);
+
 	g.popFrontN(30);
 	assert(g.length() == e.length() - 30);
 
