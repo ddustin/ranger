@@ -24,11 +24,14 @@ int main () {
 
 	Slice d = a;
 	d[0] = 95;
+	d[d.size() - 2] = 54;
 	d[d.size() - 1] = 17;
 	assert(d.front() == 95);
 	assert(d.back() == 17);
 	d.back() = 11;
 	assert(d.back() == 11);
+	d.popBack();
+	assert(d.back() == 54);
 
 	d.popFrontN(10);
 	assert(d[0] == 16);
