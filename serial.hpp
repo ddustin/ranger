@@ -51,7 +51,8 @@ namespace serial {
 		r.popFrontN(e.size());
 	}
 
-	void putReverse (Slice& r, Slice e) {
+	template <typename E>
+	void putReverse (Slice& r, E e) {
 		assert(r.size() >= e.size());
 
 		while (!e.empty()) {
@@ -63,6 +64,12 @@ namespace serial {
 
 		r.popFrontN(e.size());
 	}
+
+	template <typename E, bool BE = false>
+	void put (Slice&& r, const E e) { put<E, BE>(r, e); }
+	void put (Slice&& r, const Slice e) { put(r, e); }
+	template <typename E>
+	void putReverse (Slice&& r, const E e) { putReverse(r, e); }
 
 	template <typename E, bool BE = false>
 	auto read (Slice& r) {

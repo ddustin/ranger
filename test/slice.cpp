@@ -52,5 +52,21 @@ int main () {
 	g.popFrontN(30);
 	assert(g.size() == e.size() - 30);
 
+	StackSlice<4> xx;
+	for (auto i = 0; i < 4; ++i) {
+		xx[i] = static_cast<uint8_t>((i + 1) * 2);
+	}
+
+	StackSlice<4> yy;
+	StackSlice<4> zz;
+
+	serial::put(Slice(yy), xx);
+	serial::putReverse(Slice(zz), Slice(xx));
+
+	for (auto i = 0; i < 4; ++i) {
+		assert(yy[i] == xx[i]);
+		assert(zz[i] == xx[3 - i]);
+	}
+
 	return 0;
 }
