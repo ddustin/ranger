@@ -44,14 +44,6 @@ public:
 		return TypedSlice<T>(this->begin(), this->begin() + n);
 	}
 
-	template <typename E>
-	void assign (const E& e) {
-		static_assert(std::is_same<T, typename E::value_type>::value);
-		assert(this->size() >= e.size());
-
-		memcpy(this->begin(), e.begin(), e.size());
-	}
-
 	auto& operator[] (const size_t i) {
 		assert(i < this->size());
 		return this->_begin[i];
@@ -67,14 +59,18 @@ public:
 		return std::lexicographical_compare(this->begin(), this->end(), rhs.begin(), rhs.end());
 	}
 
+	void popBackN (size_t n) {
+		assert(n <= this->size());
+		this->_end -= n;
+	}
+
 	void popFrontN (size_t n) {
 		assert(n <= this->size());
 		this->_begin += n;
 	}
 
-	void popFront () {
-		this->popFrontN(1);
-	}
+	void popBack () { this->popBackN(1); }
+	void popFront () { this->popFrontN(1); }
 };
 
 template <typename T, size_t N>
