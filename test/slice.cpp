@@ -23,6 +23,13 @@ int main () {
 	assert(a.size() == 32);
 
 	Slice d = a;
+	d[0] = 95;
+	d[d.size() - 1] = 17;
+	assert(d.front() == 95);
+	assert(d.back() == 17);
+	d.back() = 11;
+	assert(d.back() == 11);
+
 	d.popFrontN(10);
 	assert(d[0] == 16);
 	d.popFrontN(10);
@@ -39,17 +46,8 @@ int main () {
 	auto g = Slice(e);
 	assert(e.size() == g.size());
 
-	serial::put<uint32_t>(g, 19);
-	const auto i = serial::peek<uint32_t>(g);
-	assert(i == 19);
-
 	g.popFrontN(30);
 	assert(g.size() == e.size() - 30);
-
-	Slice(e).assign(g);
-
-	std::array<uint8_t, 32> array;
-	Slice(e).assign(array);
 
 	return 0;
 }

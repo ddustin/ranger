@@ -18,22 +18,22 @@ namespace {
 }
 
 namespace serial {
-	template <typename E, bool BE = false, typename R>
-	auto peek (const R& range) {
-		using T = typename R::value_type;
+	template <typename E, bool BE = false>
+	auto peek (const Slice& r) {
+		using T = typename Slice::value_type;
 
 		static_assert(sizeof(E) % sizeof(T) == 0);
-		assert((sizeof(E) / sizeof(T)) <= range.size());
+		assert((sizeof(E) / sizeof(T)) <= r.size());
 
-		auto value = *(reinterpret_cast<const E*>(range.begin()));
+		auto value = *(reinterpret_cast<const E*>(r.begin()));
 		if (BE) reverseBytes(&value);
 
 		return value;
 	}
 
-	template <typename E, bool BE = false, typename R>
-	void put (R& r, const E e) {
-		using T = typename R::value_type;
+	template <typename E, bool BE = false>
+	void put (Slice& r, const E e) {
+		using T = typename Slice::value_type;
 
 		static_assert(sizeof(E) % sizeof(T) == 0);
 		assert((sizeof(E) / sizeof(T)) <= r.size());
@@ -41,22 +41,35 @@ namespace serial {
 		auto ptr = reinterpret_cast<E*>(r.begin());
 		*ptr = e;
 		if (BE) reverseBytes(ptr);
+		r.popFront();
 	}
 
-	template <typename E, bool BE = false, typename R>
-	auto read (R& r) {
-		using T = typename R::value_type;
+	void put (Slice& r, const Slice e) {
+		assert(r.size() >= e.size());
+
+		memcpy(r.begin(), e.begin(), e.size());
+		r.popFrontN(e.size());
+	}
+
+	void putReverse (Slice& r, Slice e) {
+		assert(r.size() >= e.size());
+
+		while (!e.empty()) {
+			r.front() = e.back();
+
+			r.popFront();
+			e.popBack();
+		}
+
+		r.popFrontN(e.size());
+	}
+
+	template <typename E, bool BE = false>
+	auto read (Slice& r) {
+		using T = typename Slice::value_type;
 
 		const auto e = peek<E, BE>(r);
 		r.popFrontN(sizeof(E) / sizeof(T));
 		return e;
-	}
-
-	template <typename E, bool BE = false, typename R>
-	void write (R& r, const E e) {
-		using T = typename R::value_type;
-
-		put<E, BE>(r, e);
-		r.popFrontN(sizeof(E) / sizeof(T));
 	}
 }

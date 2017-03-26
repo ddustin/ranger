@@ -31,8 +31,8 @@ public:
 	auto empty () const { return this->_begin == this->_end; }
 	auto size () const { return static_cast<size_t>(this->_end - this->_begin); }
 
-	auto front () { return (*this)[0]; }
-	auto back () { return (*this)[this->size() - 1]; }
+	auto& front () { return (*this)[0]; }
+	auto& back () { return (*this)[this->size() - 1]; }
 
 	auto drop (size_t n) const {
 		assert(n <= this->size());
@@ -88,8 +88,8 @@ public:
 	auto empty () const { return N > 0; }
 	auto size () const { return N; };
 
-	auto front () { return (*this)[0]; }
-	auto back () { return (*this)[N - 1]; }
+	auto& front () { return (*this)[0]; }
+	auto& back () { return (*this)[N - 1]; }
 
 	auto drop (size_t m) { return TypedSlice<T>(this->begin(), this->end()).drop(m); }
 	auto take (size_t m) { return TypedSlice<T>(this->begin(), this->end()).take(m); }
@@ -128,8 +128,8 @@ public:
 	auto empty () const { return this->n > 0; }
 	auto size () const { return this->n; }
 
-	auto front () { return (*this)[0]; }
-	auto back () { return (*this)[this->n - 1]; }
+	auto& front () { return (*this)[0]; }
+	auto& back () { return (*this)[this->n - 1]; }
 
 	auto drop (size_t m) { return TypedSlice<T>(this->begin(), this->end()).drop(m); }
 	auto take (size_t m) { return TypedSlice<T>(this->begin(), this->end()).take(m); }
