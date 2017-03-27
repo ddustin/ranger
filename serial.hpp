@@ -31,27 +31,17 @@ namespace serial {
 		return value;
 	}
 
-	template <typename R, typename E>
-	void put (R& r, E e) {
-		while (!e.empty()) {
-			r.front() = e.front();
-			r.popFront();
-			e.popFront();
-		}
-	}
+	template <typename E, bool BE = false>
+	auto read (Slice& r) {
+		using T = typename Slice::value_type;
 
-	template <typename R, typename E>
-	void put (R&& r, const E e) { put<R, E>(r, e); }
-
-	template <>
-	void put<Slice, Slice> (Slice& r, const Slice e) {
-		assert(r.size() >= e.size());
-		memcpy(r.begin(), e.begin(), e.size());
-		r.popFrontN(e.size());
+		const auto e = peek<E, BE>(r);
+		r.popFrontN(sizeof(E) / sizeof(T));
+		return e;
 	}
 
 	template <typename E, bool BE = false>
-	void putX (Slice& r, const E e) {
+	void write (Slice& r, const E e) {
 		using T = typename Slice::value_type;
 
 		static_assert(sizeof(E) % sizeof(T) == 0);
@@ -64,14 +54,5 @@ namespace serial {
 	}
 
 	template <typename E, bool BE = false>
-	void putX (Slice&& r, const E e) { put<E, BE>(r, e); }
-
-	template <typename E, bool BE = false>
-	auto read (Slice& r) {
-		using T = typename Slice::value_type;
-
-		const auto e = peek<E, BE>(r);
-		r.popFrontN(sizeof(E) / sizeof(T));
-		return e;
-	}
+	void write (Slice&& r, const E e) { write<E, BE>(r, e); }
 }

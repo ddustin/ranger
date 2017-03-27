@@ -1,7 +1,4 @@
 // TODO: range-ify
-// XXX: simplify Stack/Heaps Storage... they _aren't_ Slices.
-// They are ranges though. Hence, Slice(heapSlice) is useful...
-//
 #pragma once
 
 #include <algorithm>
@@ -9,6 +6,37 @@
 #include <cstdint>
 #include <cstring>
 #include <memory>
+
+namespace ranger {
+	template <typename R>
+	auto drop (R r, const size_t n) {
+		r.popFrontN(n);
+		return r;
+	}
+
+	// TODO: specialization for ranges without .size()
+	template <typename R>
+	auto take (R r, const size_t n) {
+		r.popBackN(r.size() - n);
+		return r;
+	}
+
+	template <typename R, typename E>
+	void put (R& r, E e) {
+		while (!e.empty()) {
+			r.front() = e.front();
+			r.popFront();
+			e.popFront();
+		}
+	}
+
+	// TODO
+// 	template <typename R>
+// 	void put <R, typename R::value_type> (R& r, typename R::value_type e) {
+// 		r.front() = e;
+// 		r.popFront();
+// 	}
+}
 
 template <typename T>
 struct TypedSlice {
@@ -37,15 +65,11 @@ public:
 	auto& front () { return (*this)[0]; }
 	auto& back () { return (*this)[this->size() - 1]; }
 
-	auto drop (size_t n) const {
-		assert(n <= this->size());
-		return TypedSlice<T>(this->begin() + n, this->end());
-	}
+	auto drop (size_t n) const { return ranger::drop(*this, n); }
+	auto take (size_t n) const { return ranger::take(*this, n); }
 
-	auto take (size_t n) const {
-		assert(n <= this->size());
-		return TypedSlice<T>(this->begin(), this->begin() + n);
-	}
+	template <typename E>
+	void put (E e) { return ranger::put(*this, e); }
 
 	auto& operator[] (const size_t i) {
 		assert(i < this->size());
@@ -94,9 +118,6 @@ public:
 	auto& front () { return (*this)[0]; }
 	auto& back () { return (*this)[N - 1]; }
 
-	auto drop (size_t m) { return TypedSlice<T>(this->begin(), this->end()).drop(m); }
-	auto take (size_t m) { return TypedSlice<T>(this->begin(), this->end()).take(m); }
-
 	auto& operator[] (const size_t i) {
 		assert(i < N);
 		return this->data[i];
@@ -134,9 +155,6 @@ public:
 	auto& front () { return (*this)[0]; }
 	auto& back () { return (*this)[this->n - 1]; }
 
-	auto drop (size_t m) { return TypedSlice<T>(this->begin(), this->end()).drop(m); }
-	auto take (size_t m) { return TypedSlice<T>(this->begin(), this->end()).take(m); }
-
 	auto& operator[] (const size_t i) {
 		assert(i < this->n);
 		return this->_data[i];
@@ -173,17 +191,11 @@ public:
 	auto& front () { return this->_r.back(); }
 	auto& back () { return this->_r.front(); }
 
-	auto drop (size_t n) const {
-		R copy = this->_r;
-		copy.popFrontN(n);
-		return copy;
-	}
+	auto drop (size_t n) const { return ranger::drop(*this, n); }
+	auto take (size_t n) const { return ranger::take(*this, n); }
 
-	auto take (size_t n) const {
-		R copy = this->_r;
-		copy.popBackN(this->size() - n);
-		return copy;
-	}
+	template <typename E>
+	void put (E e) { return ranger::put(*this, e); }
 
 	auto& operator[] (const size_t i) {
 		assert(i < this->size());
@@ -212,4 +224,13 @@ public:
 template <typename R>
 auto retro (const R r) {
 	return RetroRange<R>(r);
+}
+
+namespace ranger {
+	template <>
+	void put <Slice, Slice> (Slice& r, const Slice e) {
+		assert(r.size() >= e.size());
+		memcpy(r.begin(), e.begin(), e.size());
+		r.popFrontN(e.size());
+	}
 }

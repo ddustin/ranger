@@ -11,7 +11,7 @@ int main () {
 	a[20] = 63;
 	static_assert(sizeof(a) == 32);
 
-	const auto b = a.drop(10);
+	const auto b = Slice(a).drop(10);
 	assert(b.size() == 22);
 	assert(b[0] == 16);
 	assert(a.size() == 32);
@@ -42,7 +42,7 @@ int main () {
 
 	HeapSlice e(60);
 	assert(e.size() == 60);
-	const auto f = e.drop(10);
+	const auto f = Slice(e).drop(10);
 	assert(f.size() == 50);
 	assert(e.size() == 60);
 
@@ -54,7 +54,7 @@ int main () {
 
 	StackSlice<4> xx;
 	for (auto i = 0; i < 4; ++i) {
-		xx[i] = static_cast<uint8_t>((i + 1) * 2);
+		xx[i] = static_cast<uint8_t>((i + 1) * 10);
 	}
 
 	StackSlice<4> yy;
@@ -62,10 +62,11 @@ int main () {
 	StackSlice<4> zz;
 	StackSlice<4> zz2;
 
-	serial::put(Slice(yy), Slice(xx));
-	serial::put(Slice(zz), retro(Slice(xx)));
-	serial::put(retro(Slice(zz2)), Slice(xx));
-	serial::put(retro(Slice(yy2)), retro(Slice(xx)));
+	Slice(yy).put(Slice(xx));
+	retro(Slice(yy2)).put(retro(Slice(xx)));
+
+	Slice(zz).put(retro(Slice(xx)));
+	retro(Slice(zz2)).put(Slice(xx));
 
 	for (auto i = 0; i < 4; ++i) {
 		assert(yy[i] == xx[i]);
