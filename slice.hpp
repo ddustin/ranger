@@ -170,8 +170,8 @@ public:
 	// aliases
 	auto empty () const { return this->_r.empty(); }
 	auto size () const { return this->_r.size(); }
-	auto front () { return this->_r.back(); }
-	auto back () { return this->_r.front(); }
+	auto& front () { return this->_r.back(); }
+	auto& back () { return this->_r.front(); }
 
 	auto drop (size_t n) const {
 		R copy = this->_r;
