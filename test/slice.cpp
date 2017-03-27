@@ -60,8 +60,8 @@ int main () {
 	StackSlice<4> yy;
 	StackSlice<4> zz;
 
-	serial::put(Slice(yy), xx);
-	serial::putReverse(Slice(zz), Slice(xx));
+	serial::put(Slice(yy), Slice(xx));
+	serial::put(Slice(zz), retro(Slice(xx)));
 
 	for (auto i = 0; i < 4; ++i) {
 		assert(yy[i] == xx[i]);

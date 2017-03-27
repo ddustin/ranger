@@ -157,3 +157,59 @@ typedef TypedHeapSlice<uint8_t> HeapSlice;
 typedef TypedSlice<uint8_t> Slice;
 template <size_t N>
 using StackSlice = TypedStackSlice<uint8_t, N>;
+
+template <typename R>
+struct RetroRange {
+private:
+	R _r;
+
+public:
+	using value_type = typename R::value_type;
+	RetroRange (const R r) : _r(r) {}
+
+	// aliases
+	auto empty () const { return this->_r.empty(); }
+	auto size () const { return this->_r.size(); }
+	auto front () { return this->_r.back(); }
+	auto back () { return this->_r.front(); }
+
+	auto drop (size_t n) const {
+		R copy = this->_r;
+		copy.popFrontN(n);
+		return copy;
+	}
+
+	auto take (size_t n) const {
+		R copy = this->_r;
+		copy.popBackN(this->size() - n);
+		return copy;
+	}
+
+	auto& operator[] (const size_t i) {
+		assert(i < this->size());
+		return this->_r[this->size() - 1 - i];
+	}
+
+	auto operator[] (const size_t i) const {
+		assert(i < this->size());
+		return this->_r[this->size() - 1 - i];
+	}
+
+	void popBackN (size_t n) {
+		assert(n <= this->size());
+		this->_r.popFrontN(n);
+	}
+
+	void popFrontN (size_t n) {
+		assert(n <= this->size());
+		this->_r.popBackN(n);
+	}
+
+	void popBack () { this->popBackN(1); }
+	void popFront () { this->popFrontN(1); }
+};
+
+template <typename R>
+auto retro (const R r) {
+	return RetroRange<R>(r);
+}

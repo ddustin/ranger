@@ -31,8 +31,27 @@ namespace serial {
 		return value;
 	}
 
+	template <typename R, typename E>
+	void put (R& r, E e) {
+		while (!e.empty()) {
+			r.front() = e.front();
+			r.popFront();
+			e.popFront();
+		}
+	}
+
+	template <typename R, typename E>
+	void put (R&& r, const E e) { put<R, E>(r, e); }
+
+	template <>
+	void put<Slice, Slice> (Slice& r, const Slice e) {
+		assert(r.size() >= e.size());
+		memcpy(r.begin(), e.begin(), e.size());
+		r.popFrontN(e.size());
+	}
+
 	template <typename E, bool BE = false>
-	void put (Slice& r, const E e) {
+	void putX (Slice& r, const E e) {
 		using T = typename Slice::value_type;
 
 		static_assert(sizeof(E) % sizeof(T) == 0);
@@ -41,35 +60,11 @@ namespace serial {
 		auto ptr = reinterpret_cast<E*>(r.begin());
 		*ptr = e;
 		if (BE) reverseBytes(ptr);
-		r.popFront();
-	}
-
-	void put (Slice& r, const Slice e) {
-		assert(r.size() >= e.size());
-
-		memcpy(r.begin(), e.begin(), e.size());
-		r.popFrontN(e.size());
-	}
-
-	template <typename E>
-	void putReverse (Slice& r, E e) {
-		assert(r.size() >= e.size());
-
-		while (!e.empty()) {
-			r.front() = e.back();
-
-			r.popFront();
-			e.popBack();
-		}
-
-		r.popFrontN(e.size());
+		r.popFrontN(sizeof(E) / sizeof(T));
 	}
 
 	template <typename E, bool BE = false>
-	void put (Slice&& r, const E e) { put<E, BE>(r, e); }
-	void put (Slice&& r, const Slice e) { put(r, e); }
-	template <typename E>
-	void putReverse (Slice&& r, const E e) { putReverse(r, e); }
+	void putX (Slice&& r, const E e) { put<E, BE>(r, e); }
 
 	template <typename E, bool BE = false>
 	auto read (Slice& r) {
