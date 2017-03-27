@@ -1,4 +1,7 @@
 // TODO: range-ify
+// XXX: simplify Stack/Heaps Storage... they _aren't_ Slices.
+// They are ranges though. Hence, Slice(heapSlice) is useful...
+//
 #pragma once
 
 #include <algorithm>
