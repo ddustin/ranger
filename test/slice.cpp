@@ -58,16 +58,20 @@ int main () {
 	}
 
 	StackSlice<4> yy;
+	StackSlice<4> yy2;
 	StackSlice<4> zz;
 	StackSlice<4> zz2;
 
 	serial::put(Slice(yy), Slice(xx));
 	serial::put(Slice(zz), retro(Slice(xx)));
 	serial::put(retro(Slice(zz2)), Slice(xx));
+	serial::put(retro(Slice(yy2)), retro(Slice(xx)));
 
 	for (auto i = 0; i < 4; ++i) {
 		assert(yy[i] == xx[i]);
+		assert(yy2[i] == xx[i]);
 		assert(zz[i] == xx[3 - i]);
+		assert(zz2[i] == xx[3 - i]);
 	}
 
 	return 0;
