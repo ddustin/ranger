@@ -37,15 +37,14 @@ namespace ranger {
 template <typename I>
 struct Range {
 public:
-	using iterator = I;
 	using value_type = typename std::remove_reference<decltype(*I())>::type;
 
 private:
-	iterator _begin;
-	iterator _end;
+	I _begin;
+	I _end;
 
 public:
-	Range (iterator begin, iterator end) : _begin(begin), _end(end) {}
+	Range (I begin, I end) : _begin(begin), _end(end) {}
 
 	auto begin () const { return this->_begin; }
 	auto drop (size_t n) const { return ranger::drop(*this, n); }
