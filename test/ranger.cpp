@@ -55,9 +55,8 @@ int main () {
 	std::array<uint8_t, 32> a;
 	for (size_t i = 0; i < a.size(); ++i) a[i] = static_cast<uint8_t>((i * 2) + 1);
 
-// 	for (auto i = range(a); !i.empty(); i.popFront()) {
-// 		printf("%i ", i.front());
-// 	}
+	for (auto i = range(a); !i.empty(); i.popFront()) printf("%i ", i.front());
+	printf("\n");
 
 	auto b = range(a).drop(10);
 	assert(a.size() == 32);
@@ -126,6 +125,15 @@ int main () {
 	for (auto i = range(ccc); !i.empty(); i.popBack()) {
 		assert(i.back() == i.size());
 	}
+
+	const auto rrr = range(ccc);
+	for (auto i = rrr; !i.empty(); i.popBack()) {
+		assert(i.back() == i.size());
+	}
+	assert(rrr.size() == ccc.size());
+
+	memcpy(yy2.begin(), rrr.begin(), yy.size());
+// 	memcpy(rrr.begin(), yy2.begin(), yy.size()); // fails
 
 // 	std::cout << "Foo isInputRange: " << isInputRange<Foo>() << std::endl;
 // 	std::cout << "Bar isInputRange: " << isInputRange<Bar>() << std::endl;

@@ -51,11 +51,9 @@ public:
 	Range (R& r) : _begin(r.begin()), _end(r.end()) {}
 
 	auto begin () const { return this->_begin; }
-	auto begin () { return this->_begin; }
 	auto drop (size_t n) const { return ranger::drop(*this, n); }
 	auto empty () const { return this->_begin == this->_end; }
 	auto end () const { return this->_end; }
-	auto end () { return this->_end; }
 	auto size () const { return static_cast<size_t>(this->_end - this->_begin); }
 	auto take (size_t n) const { return ranger::take(*this, n); }
 	auto& back () { return *(_end - 1); }
