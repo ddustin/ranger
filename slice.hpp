@@ -177,12 +177,12 @@ public:
 	}
 
 	auto empty () const { return this->_current == this->_pastLast; }
-	auto& front () {
+	auto front () {
 		assert(!this->empty());
 		return this->_current;
 	}
 
-	auto& back () {
+	auto back () {
 		assert(!this->empty());
 		return this->_pastLast - this->_step;
 	}

@@ -124,6 +124,9 @@ int main () {
 		assert(zz2[i] == xx[3 - i]);
 	}
 
+	assert(iota(0, 20, 1).take(10).back() == 9);
+	assert(iota(0, 20, 1).drop(10).front() == 10);
+
 // 	std::cout << "Foo isInputRange: " << isInputRange<Foo>() << std::endl;
 // 	std::cout << "Bar isInputRange: " << isInputRange<Bar>() << std::endl;
 // 	std::cout << "Foo hasLength : " << hasLength<Foo>::value << std::endl;
