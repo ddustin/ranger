@@ -168,6 +168,20 @@ void serialTests () {
 
 	serial::put<int16_t>(a, 890);
 	assert(serial::peek<int16_t>(a) == 890);
+
+	uint32_t mantissa = 0x46612555;
+	std::array<uint8_t, 6> expected = {};
+	expected[5] = static_cast<uint8_t>(mantissa & 0xff);
+	expected[5 - 1] = static_cast<uint8_t>(mantissa >> 8);
+	expected[5 - 2] = static_cast<uint8_t>(mantissa >> 16);
+	expected[5 - 3] = static_cast<uint8_t>(mantissa >> 24);
+
+	std::array<uint8_t, 6> actual = {};
+	serial::write<uint32_t, true>(range(actual).drop(5 - 3), mantissa);
+
+	assert(memcmp(expected.begin(), actual.begin(), actual.size()) == 0);
+	printr(range(actual));
+	printr(range(expected));
 }
 
 void otherUsageTests () {
