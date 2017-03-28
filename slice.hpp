@@ -40,10 +40,30 @@ namespace ranger {
 
 template <typename R, typename I>
 struct Range {
+private:
+	static constexpr auto IS_CONST = std::is_const<R>::value;
+	static constexpr auto IS_REVERSED =
+		std::is_same<I, typename R::reverse_iterator>::value ||
+		std::is_same<I, typename R::const_reverse_iterator>::value;
+
+public:
 	using iterator = I;
-	using const_iterator = typename R::const_iterator;
-// 	using reverse_iterator = typename std::conditional<std::is_same<I, R::reverse_iterator>::value, typename R::iterator, I>::type;
-//  	using reverse_iterator = typename std::conditional<std::is_same<I, R::creverse_iterator>::value, typename R::iterator, I>::type;
+	using const_iterator = typename std::conditional<
+		IS_CONST,
+		I,
+		typename std::conditional<IS_REVERSED, typename R::const_reverse_iterator, typename R::const_iterator>::type
+	>::type;
+
+	using reverse_iterator = typename std::conditional<
+		IS_CONST,
+		typename std::conditional<IS_REVERSED, typename R::const_iterator, typename R::const_reverse_iterator>::type,
+		typename std::conditional<IS_REVERSED, typename R::iterator, typename R::reverse_iterator>::type
+	>::type;
+	using const_reverse_iterator = typename std::conditional<
+		IS_CONST,
+		reverse_iterator,
+		typename std::conditional<IS_REVERSED, typename R::const_iterator, typename R::const_reverse_iterator>::type
+	>::type;
 
 	using value_type = typename R::value_type;
 
@@ -58,13 +78,12 @@ public:
 	auto begin () const { return this->_begin; }
 	auto end () const { return this->_end; }
 
-	// FIXME
-	auto rbegin () const { return this->_begin; }
-	auto rend () const { return this->_end; }
-
 	auto drop (size_t n) const { return ranger::drop(*this, n); }
 	auto empty () const { return this->_begin == this->_end; }
-	auto size () const { return static_cast<size_t>(this->_end - this->_begin); }
+	auto size () const {
+		return static_cast<size_t>(this->_end - this->_begin);
+	}
+
 	auto take (size_t n) const { return ranger::take(*this, n); }
 	auto& back () { return *(_end - 1); }
 	auto& front () { return *_begin; }
@@ -106,10 +125,16 @@ auto retro (R& r) {
 		typename R::iterator
 	>::type;
 	using reverse_iterator = std::reverse_iterator<iterator>;
+	// TODO
+// 	using reverse_iterator = typename std::conditional<
+// 		std::is_const<R>::value,
+// 		typename R::const_reverse_iterator,
+// 		typename R::reverse_iterator
+// 	>::type;
 
 	return Range<R, reverse_iterator>(
-		reverse_iterator(r.begin()),
-		reverse_iterator(r.end())
+		reverse_iterator(r.end()),
+		reverse_iterator(r.begin())
 	);
 }
 

@@ -86,42 +86,50 @@ void retroTests () {
 	std::array<uint8_t, 4> yy = {0};
 
 	range(yy).put(retro(xx));
-// 	for (auto i = range(yy); !i.empty(); i.popFront()) {
-// 		assert((i.front() + 1u) == i.size());
-// 	}
-//
-// 	yy = {0}; // reset
-// 	retro(yy).put(range(xx));
-// 	for (auto i = range(yy); !i.empty(); i.popFront()) {
-// 		assert((i.front() + 1u) == i.size());
-// 	}
+	for (auto i = range(yy); !i.empty(); i.popFront()) {
+		assert((i.front() + 1u) == i.size());
+	}
 
-// 	printr(range(yy));
-// 	printr(retro(retro(yy)));
+	yy = {0}; // reset
+	retro(yy).put(range(xx));
+	for (auto i = range(yy); !i.empty(); i.popFront()) {
+		assert((i.front() + 1u) == i.size());
+	}
 
-// 	retro(range(yy)).put(retro(range(xx)));
-// 	range(yy).put(retro(range(xx)));
-// 	std::array<uint8_t, 4> zz;
-// 	std::array<uint8_t, 4> zz2;
-//
-// 	range(zz).put(retro(range(xx)));
-// 	retro(range(zz2)).put(range(xx));
+	retro(retro(yy)).put(retro(xx));
+	for (auto i = range(yy); !i.empty(); i.popFront()) {
+		assert((i.front() + 1u) == i.size());
+	}
 
-// 	for (auto i = 0; i < 4; ++i) {
-// 		assert(yy[i] == xx[i]);
-// 		assert(yy2[i] == xx[i]);
-// 		assert(zz[i] == xx[3 - i]);
-// 		assert(zz2[i] == xx[3 - i]);
-// 	}
-//
-// 	memcpy(yy2.begin(), rrr.begin(), yy.size());
-// 	memcpy(rrr.begin(), yy2.begin(), yy.size()); // fails
+	memcpy(yy.begin(), xx.begin(), yy.size());
+	for (auto i = range(yy); !i.empty(); i.popBack()) {
+		assert((i.back() + 1u) == i.size());
+	}
 
-// 	auto retroccc = range<decltype(ccc)>(ccc.rbegin(), ccc.rend());
+	yy = {9,9,9,9}; // reset
+	auto mm = retro(yy).drop(1);
+	range(mm).put(range(xx).drop(1));
+
+	assert(yy[0] == 3);
+	assert(yy[1] == 2);
+	assert(yy[2] == 1);
+	assert(yy[3] == 9);
+
+	yy = {9,9,9,9}; // reset
+	auto nn = retro(range(yy).drop(1));
+	range(nn).put(range(xx).drop(1));
+
+	assert(yy[0] == 9);
+	assert(yy[1] == 3);
+	assert(yy[2] == 2);
+	assert(yy[3] == 1);
+
+	assert(retro(range(yy)).drop(2).size() == 2);
+	assert(retro(range(yy)).drop(4).size() == 0);
 }
 
 int main () {
-// 	rangeTests();
+	rangeTests();
 	retroTests();
 
 	return 0;
