@@ -151,10 +151,15 @@ void serialTests () {
 	assert(rr.size() == 2);
 }
 
+void otherUsageTests () {
+
+}
+
 int main () {
 	rangeTests();
 	retroTests();
 	serialTests();
+	otherUsageTests();
 
 	return 0;
 }

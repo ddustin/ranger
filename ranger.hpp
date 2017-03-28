@@ -53,17 +53,8 @@ public:
 		typename std::conditional<IS_REVERSED, typename R::const_reverse_iterator, typename R::const_iterator>::type
 	>::type;
 
-	using reverse_iterator = typename std::conditional<
-		IS_CONST,
-		typename std::conditional<IS_REVERSED, typename R::const_iterator, typename R::const_reverse_iterator>::type,
-		typename std::conditional<IS_REVERSED, typename R::iterator, typename R::reverse_iterator>::type
-	>::type;
-	using const_reverse_iterator = typename std::conditional<
-		IS_CONST,
-		reverse_iterator,
-		typename std::conditional<IS_REVERSED, typename R::const_iterator, typename R::const_reverse_iterator>::type
-	>::type;
-
+	using reverse_iterator = std::reverse_iterator<iterator>;
+	using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 	using value_type = typename R::value_type;
 
 private:
