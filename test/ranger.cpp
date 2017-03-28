@@ -51,7 +51,7 @@
 // 	return r.length();
 // }
 
-int main () {
+void rangeTests () {
 	std::array<uint8_t, 32> a;
 	for (size_t i = 0; i < a.size(); ++i) a[i] = static_cast<uint8_t>((i * 2) + 1);
 
@@ -103,23 +103,11 @@ int main () {
 		xx[i] = static_cast<uint8_t>((i + 1) * 10);
 	}
 
-	std::array<uint8_t, 4> yy;
-	std::array<uint8_t, 4> yy2;
-	std::array<uint8_t, 4> zz;
-	std::array<uint8_t, 4> zz2;
+	auto h = range(g);
+	assert(h.size() == g.size());
 
-	range(yy).put(range(xx));
-	retro(range(yy2)).put(retro(range(xx)));
-
-	range(zz).put(retro(range(xx)));
-	retro(range(zz2)).put(range(xx));
-
-	for (auto i = 0; i < 4; ++i) {
-		assert(yy[i] == xx[i]);
-		assert(yy2[i] == xx[i]);
-		assert(zz[i] == xx[3 - i]);
-		assert(zz2[i] == xx[3 - i]);
-	}
+	auto i = range(range(g));
+	assert(i.size() == g.size());
 
 	const std::array<uint8_t, 4> ccc = {1, 2, 3, 4};
 	for (auto i = range(ccc); !i.empty(); i.popBack()) {
@@ -131,18 +119,36 @@ int main () {
 		assert(i.back() == i.size());
 	}
 	assert(rrr.size() == ccc.size());
+}
 
-	memcpy(yy2.begin(), rrr.begin(), yy.size());
+void retroTests () {
+// 	std::array<uint8_t, 4> yy;
+// 	std::array<uint8_t, 4> yy2;
+// 	std::array<uint8_t, 4> zz;
+// 	std::array<uint8_t, 4> zz2;
+//
+// 	range(yy).put(range(xx));
+// 	retro(range(yy2)).put(retro(range(xx)));
+//
+// 	range(zz).put(retro(range(xx)));
+// 	retro(range(zz2)).put(range(xx));
+
+// 	for (auto i = 0; i < 4; ++i) {
+// 		assert(yy[i] == xx[i]);
+// 		assert(yy2[i] == xx[i]);
+// 		assert(zz[i] == xx[3 - i]);
+// 		assert(zz2[i] == xx[3 - i]);
+// 	}
+//
+// 	memcpy(yy2.begin(), rrr.begin(), yy.size());
 // 	memcpy(rrr.begin(), yy2.begin(), yy.size()); // fails
 
-// 	std::cout << "Foo isInputRange: " << isInputRange<Foo>() << std::endl;
-// 	std::cout << "Bar isInputRange: " << isInputRange<Bar>() << std::endl;
-// 	std::cout << "Foo hasLength : " << hasLength<Foo>::value << std::endl;
-// 	std::cout << "Bar hasLength : " << hasLength<Bar>::value << std::endl;
-//
-// 	std::cout << "Bar length : " << lengthOf(Bar()) << std::endl;
-//
-// 	return 0;
+// 	auto retroccc = range<decltype(ccc)>(ccc.rbegin(), ccc.rend());
+}
+
+int main () {
+	rangeTests();
+	retroTests();
 
 	return 0;
 }
