@@ -79,6 +79,9 @@ void rangeTests () {
 
 	std::array<uint8_t, 4> yy;
 	range(yy).put(range(ccc));
+
+	const auto rrr2 = range(range(rrr));
+	assert(rrr2.size() == ccc.size());
 }
 
 void retroTests () {
