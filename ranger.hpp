@@ -3,7 +3,7 @@
 #include <cassert>
 #include <type_traits>
 
-namespace ranger {
+namespace __ranger {
 	template <typename R>
 	auto drop (R r, const size_t n) {
 		r.popFrontN(n);
@@ -46,7 +46,7 @@ namespace ranger {
 		Range (I begin, I end) : _begin(begin), _end(end) {}
 
 		auto begin () const { return this->_begin; }
-		auto drop (size_t n) const { return ranger::drop(*this, n); }
+		auto drop (size_t n) const { return __ranger::drop(*this, n); }
 		auto empty () const { return this->_begin == this->_end; }
 		auto end () const { return this->_end; }
 		auto size () const {
@@ -54,7 +54,7 @@ namespace ranger {
 			assert(diff >= 0);
 			return static_cast<size_t>(diff);
 		}
-		auto take (size_t n) const { return ranger::take(*this, n); }
+		auto take (size_t n) const { return __ranger::take(*this, n); }
 		auto& back () { return *(_end - 1); }
 		auto& front () { return *_begin; }
 		void popBack () { this->popBackN(1); }
@@ -69,7 +69,7 @@ namespace ranger {
 		}
 
 		template <typename E>
-		void put (E e) { return ranger::put(*this, e); }
+		void put (E e) { return __ranger::put(*this, e); }
 
 		auto& operator[] (const size_t i) {
 			assert(i < this->size());
@@ -92,14 +92,14 @@ template <typename R>
 auto range (R& r) {
 	using iterator = decltype(r.begin());
 
-	return ranger::Range<iterator>(r.begin(), r.end());
+	return __ranger::Range<iterator>(r.begin(), r.end());
 }
 
 template <typename R>
 auto retro (R& r) {
 	using reverse_iterator = std::reverse_iterator<decltype(r.begin())>;
 
-	return ranger::Range<reverse_iterator>(reverse_iterator(r.end()), reverse_iterator(r.begin()));
+	return __ranger::Range<reverse_iterator>(reverse_iterator(r.end()), reverse_iterator(r.begin()));
 }
 
 // rvalue references wrappers
