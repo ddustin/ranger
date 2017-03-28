@@ -50,7 +50,11 @@ public:
 	auto drop (size_t n) const { return ranger::drop(*this, n); }
 	auto empty () const { return this->_begin == this->_end; }
 	auto end () const { return this->_end; }
-	auto size () const { return static_cast<size_t>(this->_end - this->_begin); }
+	auto size () const {
+		const auto diff = std::distance(this->_begin, this->_end);
+		assert(diff >= 0);
+		return static_cast<size_t>(diff);
+	}
 	auto take (size_t n) const { return ranger::take(*this, n); }
 	auto& back () { return *(_end - 1); }
 	auto& front () { return *_begin; }
