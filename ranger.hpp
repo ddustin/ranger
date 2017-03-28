@@ -1,80 +1,146 @@
-#include <type_traits>
+#pragma once
 
-// template <typename R>
-// struct hasBegin {
-// 	using T = R::value_type;
-//
-// 	template <bool result = std::is_same<T*, decltype(((R*)nullptr)->begin())>::value>
-// 	constexpr static bool eval (int) { return result; }
-// 	constexpr static bool eval (...) { return false; }
-//
-// 	static constexpr const bool value = ::eval(0);
-// };
+#include <algorithm>
+#include <cassert>
+#include <cstdint>
+#include <cstring>
+#include <memory>
 
-// template <typename R, bool result = std::is_same<decltype(((R*)nullptr)->length()), size_t>::value>
-// constexpr bool hasLengthImpl (int) { return result; }
-//
-// template <typename R>
-// constexpr bool hasLengthImpl (...) { return false; }
-//
-// template <typename R>
-// constexpr bool hasLength () { return ; }
+namespace ranger {
+	template <typename R>
+	auto drop (R r, const size_t n) {
+		r.popFrontN(n);
+		return r;
+	}
 
-// TR auto isInfinite (typename std::enable_if<std::is_same<decltype(R().length()), size_t>::value, void>::type) {
-// 	return false;
-// }
-// TR bool isInfinite () {
-// 	R range;
-// 	return !range.empty();
-// }
+	// TODO: specialization for ranges without .size()
+	template <typename R>
+	auto take (R r, const size_t n) {
+		r.popBackN(r.size() - n);
+		return r;
+	}
 
-// TR auto isRandomAccessRange () {
-// 	R range;
-// 	return (hasLength<R>() || isInfinite<R>()) &&
-// 		std::is_same<decltype(range.front()), decltype(range[0])>::value;
-// }
-//
+	template <typename R, typename E>
+	void put (R& r, E e) {
+		while (!e.empty()) {
+			r.front() = e.front();
+			r.popFront();
+			e.popFront();
+		}
+	}
 
-// struct Foo {
-// 	bool empty() { return true; }
-// 	int front() { return 0; }
-// 	void popFront() {}
-// };
-//
-// struct Bar {
-// 	char front() { return 'a'; }
-// 	char operator[] (size_t) { return 'b'; }
-// 	size_t length () const { return 5; }
-// };
-
-// has front, popFront, and empty
-// template <typename R>
-// struct isInputRange {
-// 	using T = typename R::value_type;
-//
-// 	template <bool result =
-// 		std::is_same<T, decltype(((R*)nullptr)->front())>::value &&
-// 		std::is_same<bool, decltype(((R*)nullptr)->empty())>::value &&
-// 		std::is_same<void, decltype(((R*)nullptr)->popFront())>::value>
-// 	constexpr static bool eval (int) { return result; }
-// 	constexpr static bool eval (...) { return false; }
-//
-// 	static const auto value = eval(0);
-// };
-
-// 	template <typename E>
-// 	typename std::enable_if<isInputRange<E>::value, void>::type assign (E e) {
-// 		static_assert(std::is_same<T, typename E::value_type>::value);
-// 		assert(this->size() >= e.size());
-//
-// 		for (size_t i = 0; !e.empty(); e.popFront(), ++i) {
-// 			(*this)[i] = e.front();
-// 		}
+	// TODO
+// 	template <typename R>
+// 	void put <R, typename R::value_type> (R& r, typename R::value_type e) {
+// 		r.front() = e;
+// 		r.popFront();
 // 	}
+}
 
-// #include "../ranger.hpp"
-//
-// template <typename R>
-// typename std::enable_if<hasLength<R>::value, size_t>::type lengthOf (R r) {
-// 	return r.length();
-// }
+template <typename R, typename I>
+struct Range {
+private:
+	static constexpr auto IS_CONST = std::is_const<R>::value;
+	static constexpr auto IS_REVERSED =
+		std::is_same<I, typename R::reverse_iterator>::value ||
+		std::is_same<I, typename R::const_reverse_iterator>::value;
+
+public:
+	using iterator = I;
+	using const_iterator = typename std::conditional<
+		IS_CONST,
+		I,
+		typename std::conditional<IS_REVERSED, typename R::const_reverse_iterator, typename R::const_iterator>::type
+	>::type;
+
+	using reverse_iterator = typename std::conditional<
+		IS_CONST,
+		typename std::conditional<IS_REVERSED, typename R::const_iterator, typename R::const_reverse_iterator>::type,
+		typename std::conditional<IS_REVERSED, typename R::iterator, typename R::reverse_iterator>::type
+	>::type;
+	using const_reverse_iterator = typename std::conditional<
+		IS_CONST,
+		reverse_iterator,
+		typename std::conditional<IS_REVERSED, typename R::const_iterator, typename R::const_reverse_iterator>::type
+	>::type;
+
+	using value_type = typename R::value_type;
+
+private:
+	iterator _begin;
+	iterator _end;
+
+public:
+	Range (R& r) : _begin(r.begin()), _end(r.end()) {}
+	Range (iterator begin, iterator end) : _begin(begin), _end(end) {}
+
+	auto begin () const { return this->_begin; }
+	auto drop (size_t n) const { return ranger::drop(*this, n); }
+	auto empty () const { return this->_begin == this->_end; }
+	auto end () const { return this->_end; }
+	auto size () const { return static_cast<size_t>(this->_end - this->_begin); }
+	auto take (size_t n) const { return ranger::take(*this, n); }
+	auto& back () { return *(_end - 1); }
+	auto& front () { return *_begin; }
+	void popBack () { this->popBackN(1); }
+	void popBackN (size_t n) {
+		assert(n <= this->size());
+		this->_end -= n;
+	}
+	void popFront () { this->popFrontN(1); }
+	void popFrontN (size_t n) {
+		assert(n <= this->size());
+		this->_begin += n;
+	}
+
+	template <typename E>
+	void put (E e) { return ranger::put(*this, e); }
+
+	auto& operator[] (const size_t i) {
+		assert(i < this->size());
+		return *(this->_begin + i);
+	}
+
+	auto operator[] (const size_t i) const {
+		assert(i < this->size());
+		return *(this->_begin + i);
+	}
+
+	template <typename E>
+	auto operator< (const E& rhs) const {
+		return std::lexicographical_compare(this->begin(), this->end(), rhs.begin(), rhs.end());
+	}
+};
+
+template <typename R>
+auto retro (R& r) {
+// TODO: why not?
+// 	using reverse_iterator = typename std::conditional<
+// 		std::is_const<R>::value,
+// 		typename R::const_reverse_iterator,
+// 		typename R::reverse_iterator
+// 	>::type;
+	using iterator = typename std::conditional<
+		std::is_const<R>::value,
+		typename R::const_iterator,
+		typename R::iterator
+	>::type;
+	using reverse_iterator = std::reverse_iterator<iterator>;
+
+	return Range<R, reverse_iterator>(reverse_iterator(r.end()), reverse_iterator(r.begin()));
+}
+
+template <typename R>
+auto range (R& r) {
+	using iterator = typename std::conditional<
+		std::is_const<R>::value,
+		typename R::const_iterator,
+		typename R::iterator
+	>::type;
+
+	return Range<R, iterator>(r.begin(), r.end());
+}
+
+// rvalue references wrappers
+template <typename R> auto retro (R&& r) { return retro<R>(r); }
+template <typename R> auto range (R&& r) { return range<R>(r); }

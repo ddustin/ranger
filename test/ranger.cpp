@@ -4,7 +4,7 @@
 #include <type_traits>
 #include <vector>
 
-#include "../slice.hpp"
+#include "../ranger.hpp"
 #include "../serial.hpp"
 
 template <typename R>
@@ -131,9 +131,30 @@ void retroTests () {
 	assert(retro(range(yy)).drop(4).size() == 0);
 }
 
+void serialTests () {
+	std::array<uint8_t, 4> a = {165, 102, 42, 10};
+
+	auto x = serial::peek<int32_t>(a);
+	assert(x == ((a[0] << 0) + (a[1] << 8) + (a[2] << 16) + (a[3] << 24)));
+
+	auto y = serial::peek<int32_t, true>(a);
+	assert(y == ((a[0] << 24) + (a[1] << 16) + (a[2] << 8) + (a[3] << 0)));
+
+	auto r = range(a);
+	serial::read<int32_t>(r);
+	assert(r.size() == 0);
+
+	auto rr = range(a);
+	assert(rr.size() == 4);
+	serial::write<int16_t>(rr, 2048);
+	assert(serial::peek<int16_t>(a) == 2048);
+	assert(rr.size() == 2);
+}
+
 int main () {
 	rangeTests();
 	retroTests();
+	serialTests();
 
 	return 0;
 }
