@@ -24,9 +24,14 @@ namespace serial {
 
 		static_assert(std::is_same<T, uint8_t>::value);
 		static_assert(sizeof(E) % sizeof(T) == 0);
-		assert((sizeof(E) / sizeof(T)) <= r.size());
 
-		auto value = *(reinterpret_cast<const E*>(r.begin()));
+		constexpr auto count = sizeof(E) / sizeof(T);
+		assert(count <= r.size());
+
+		E value;
+		auto ptr = reinterpret_cast<T*>(&value);
+		for (size_t i = 0; i < count; ++i) ptr[i] = r[i];
+
 		if (BE) reverseBytes(&value);
 
 		return value;
