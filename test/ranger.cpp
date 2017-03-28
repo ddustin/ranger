@@ -2,6 +2,7 @@
 #include <cassert>
 #include <cstring>
 #include <iostream>
+#include <map>
 #include <type_traits>
 #include <vector>
 
@@ -163,7 +164,14 @@ void serialTests () {
 }
 
 void otherUsageTests () {
+	std::map<int, int> vs;
+	vs[0] = 4;
+	vs[1] = 9;
 
+	auto rm = range(vs);
+	for (auto i = rm; !i.empty(); i.popFront()) {
+		printf("%i %i\n", i.front().first, i.front().second);
+	}
 }
 
 int main () {
