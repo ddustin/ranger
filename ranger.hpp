@@ -38,7 +38,6 @@ template <typename I>
 struct Range {
 public:
 	using iterator = I;
-	using const_iterator = I; // re-evaluate, this is [probably] not safe __at_all__
 	using value_type = typename std::remove_reference<decltype(*I())>::type;
 
 private:
@@ -90,7 +89,7 @@ template <typename R>
 auto range (R& r) {
 	using iterator = typename std::conditional<
 		std::is_const<R>::value,
-		typename R::const_iterator,
+		decltype(r.begin()),
 		typename R::iterator
 	>::type;
 
