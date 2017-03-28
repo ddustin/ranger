@@ -7,14 +7,14 @@ namespace __ranger {
 	template <typename R>
 	auto drop (R r, const size_t n) {
 		r.popFrontN(n);
-		return r;
+		return std::move(r);
 	}
 
 	// TODO: specialization for ranges without .size()
 	template <typename R>
 	auto take (R r, const size_t n) {
 		r.popBackN(r.size() - n);
-		return r;
+		return std::move(r);
 	}
 
 	template <typename R, typename E>
