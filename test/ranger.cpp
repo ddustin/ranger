@@ -48,7 +48,9 @@ void rangeTests () {
 
 	d.popFrontN(20);
 	assert(d[0] == a[20]);
+}
 
+void rangeTests2 () {
 	std::vector<uint8_t> e(60);
 	assert(e.size() == 60);
 	const auto f = range(e).drop(10);
@@ -166,6 +168,7 @@ void otherUsageTests () {
 
 int main () {
 	rangeTests();
+	rangeTests2();
 	retroTests();
 	serialTests();
 	otherUsageTests();
