@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cassert>
+#include <iterator>
 #include <type_traits>
 
 namespace __ranger {
