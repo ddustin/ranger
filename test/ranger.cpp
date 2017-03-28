@@ -61,14 +61,14 @@ void rangeTests () {
 	auto i = range(range(g));
 	assert(i.size() == g.size());
 
-	const std::array<uint8_t, 4> ccc = {1, 2, 3, 4};
+	const std::array<uint8_t, 4> ccc = {0, 1, 2, 3};
 	for (auto i = range(ccc); !i.empty(); i.popBack()) {
-		assert(i.back() == i.size());
+		assert((i.back() + 1u) == i.size());
 	}
 
 	const auto rrr = range(ccc);
 	for (auto i = rrr; !i.empty(); i.popBack()) {
-		assert(i.back() == i.size());
+		assert((i.back() + 1u) == i.size());
 	}
 	assert(rrr.size() == ccc.size());
 
