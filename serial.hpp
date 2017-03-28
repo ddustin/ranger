@@ -46,9 +46,6 @@ namespace serial {
 	}
 
 	template <typename E, bool BE = false, typename R>
-	void put (R&& r, const E e) { put<E, BE, R>(r, e); }
-
-	template <typename E, bool BE = false, typename R>
 	auto read (R& r) {
 		using T = typename R::value_type;
 
@@ -58,9 +55,6 @@ namespace serial {
 	}
 
 	template <typename E, bool BE = false, typename R>
-	auto read (R&& r) { return read<E, BE, R>(r); }
-
-	template <typename E, bool BE = false, typename R>
 	void write (R& r, const E e) {
 		using T = typename R::value_type;
 
@@ -68,6 +62,8 @@ namespace serial {
 		r.popFrontN(sizeof(E) / sizeof(T));
 	}
 
-	template <typename E, bool BE = false, typename R>
-	void write (R&& r, const E e) { write<E, BE, R>(r, e); }
+	// rvalue references wrappers
+	template <typename E, bool BE = false, typename R> void put (R&& r, const E e) { put<E, BE, R>(r, e); }
+	template <typename E, bool BE = false, typename R> auto read (R&& r) { return read<E, BE, R>(r); }
+	template <typename E, bool BE = false, typename R> void write (R&& r, const E e) { write<E, BE, R>(r, e); }
 }
