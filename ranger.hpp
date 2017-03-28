@@ -35,14 +35,13 @@ namespace __ranger {
 
 	template <typename I>
 	struct Range {
-	public:
-		using value_type = typename std::remove_reference<decltype(*I())>::type;
-
 	private:
 		I _begin;
 		I _end;
 
 	public:
+		using value_type = typename std::remove_reference<decltype(*I())>::type;
+
 		Range (I begin, I end) : _begin(begin), _end(end) {}
 
 		auto begin () const { return this->_begin; }
