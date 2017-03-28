@@ -2,6 +2,7 @@
 #include <cassert>
 #include <cstring>
 #include <iostream>
+#include <list>
 #include <map>
 #include <type_traits>
 #include <vector>
@@ -202,9 +203,28 @@ void otherUsageTests () {
 	assert(rm[0].second == 3);
 	assert(rm[1].second == 44);
 	assert(rm[2].second == 555);
-
 	// boom (fails on size assertion)
 // 	assert(rm[4].second == 3);
+
+	uint64_t h = 0xffff000011110000;
+	std::list<uint8_t> ls;
+	ls.push_back(0);
+	ls.push_back(0);
+	ls.push_back(0);
+	ls.push_back(0);
+	ls.push_back(0);
+	ls.push_back(0);
+	ls.push_back(0);
+	ls.push_back(0);
+
+	serial::put<uint64_t>(range(ls), h);
+	// compare, byte for byte again h
+	size_t i = 0;
+	for (auto x = ls.begin(); x != ls.end(); ++x) {
+		auto hp = reinterpret_cast<uint8_t*>(&h);
+		assert(hp[i] == *x);
+		++i;
+	}
 }
 
 int main () {

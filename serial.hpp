@@ -2,20 +2,12 @@
 #pragma once
 
 #include <algorithm>
-#include <type_traits>
+#include "ranger.hpp"
 
 #include "endian.h"
 #if __BYTE_ORDER != __LITTLE_ENDIAN
 #error "big endian architecture not supported"
 #endif
-
-namespace {
-	template <typename T>
-	void reverseBytes (T* p) {
-		auto q = reinterpret_cast<uint8_t*>(p);
-		std::reverse(q, q + sizeof(T));
-	}
-}
 
 namespace serial {
 	template <typename E, bool BE = false, typename R>
@@ -29,10 +21,14 @@ namespace serial {
 		assert(count <= r.size());
 
 		E value;
+		auto copy = range(r);
 		auto ptr = reinterpret_cast<T*>(&value);
-		for (size_t i = 0; i < count; ++i) ptr[i] = r[i];
 
-		if (BE) reverseBytes(&value);
+		if (BE) {
+			for (size_t i = 0; i < count; ++i, copy.popFront()) ptr[count - 1 - i] = copy.front();
+		} else {
+			for (size_t i = 0; i < count; ++i, copy.popFront()) ptr[i] = copy.front();
+		}
 
 		return value;
 	}
@@ -43,11 +39,18 @@ namespace serial {
 
 		static_assert(std::is_same<T, uint8_t>::value);
 		static_assert(sizeof(E) % sizeof(T) == 0);
-		assert((sizeof(E) / sizeof(T)) <= r.size());
 
-		auto ptr = reinterpret_cast<E*>(r.begin());
-		*ptr = e;
-		if (BE) reverseBytes(ptr);
+		constexpr auto count = sizeof(E) / sizeof(T);
+		assert(count <= r.size());
+
+		auto copy = range(r);
+		auto ptr = reinterpret_cast<const T*>(&e);
+
+		if (BE) {
+			for (size_t i = 0; i < count; ++i, copy.popFront()) copy.front() = ptr[count - 1 - i];
+		} else {
+			for (size_t i = 0; i < count; ++i, copy.popFront()) copy.front() = ptr[i];
+		}
 	}
 
 	template <typename E, bool BE = false, typename R>
