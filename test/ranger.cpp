@@ -169,15 +169,19 @@ void serialTests () {
 	serial::put<int16_t>(a, 890);
 	assert(serial::peek<int16_t>(a) == 890);
 
-	uint32_t mantissa = 0x46612555;
-	std::array<uint8_t, 6> expected = {};
-	expected[5] = static_cast<uint8_t>(mantissa & 0xff);
-	expected[5 - 1] = static_cast<uint8_t>(mantissa >> 8);
-	expected[5 - 2] = static_cast<uint8_t>(mantissa >> 16);
-	expected[5 - 3] = static_cast<uint8_t>(mantissa >> 24);
+	uint32_t mantissa = 0x90ffccde;
+	std::array<uint8_t, 4> expected = {};
+	expected[3] = static_cast<uint8_t>(mantissa & 0xff);
+	expected[3 - 1] = static_cast<uint8_t>(mantissa >> 8);
+	expected[3 - 2] = static_cast<uint8_t>(mantissa >> 16);
+	expected[3 - 3] = static_cast<uint8_t>(mantissa >> 24);
+	const auto em = serial::peek<uint32_t, true>(expected);
+	assert(em == mantissa);
 
-	std::array<uint8_t, 6> actual = {};
-	serial::write<uint32_t, true>(range(actual).drop(5 - 3), mantissa);
+	std::array<uint8_t, 4> actual = {};
+	serial::put<uint32_t, true>(actual, mantissa);
+	const auto am = serial::peek<uint32_t, true>(actual);
+	assert(am == mantissa);
 
 	assert(memcmp(expected.begin(), actual.begin(), actual.size()) == 0);
 	printr(range(actual));
