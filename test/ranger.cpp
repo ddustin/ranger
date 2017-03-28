@@ -7,50 +7,6 @@
 #include "../slice.hpp"
 #include "../serial.hpp"
 
-// struct Foo {
-// 	bool empty() { return true; }
-// 	int front() { return 0; }
-// 	void popFront() {}
-// };
-//
-// struct Bar {
-// 	char front() { return 'a'; }
-// 	char operator[] (size_t) { return 'b'; }
-// 	size_t length () const { return 5; }
-// };
-
-// has front, popFront, and empty
-// template <typename R>
-// struct isInputRange {
-// 	using T = typename R::value_type;
-//
-// 	template <bool result =
-// 		std::is_same<T, decltype(((R*)nullptr)->front())>::value &&
-// 		std::is_same<bool, decltype(((R*)nullptr)->empty())>::value &&
-// 		std::is_same<void, decltype(((R*)nullptr)->popFront())>::value>
-// 	constexpr static bool eval (int) { return result; }
-// 	constexpr static bool eval (...) { return false; }
-//
-// 	static const auto value = eval(0);
-// };
-
-// 	template <typename E>
-// 	typename std::enable_if<isInputRange<E>::value, void>::type assign (E e) {
-// 		static_assert(std::is_same<T, typename E::value_type>::value);
-// 		assert(this->size() >= e.size());
-//
-// 		for (size_t i = 0; !e.empty(); e.popFront(), ++i) {
-// 			(*this)[i] = e.front();
-// 		}
-// 	}
-
-// #include "../ranger.hpp"
-//
-// template <typename R>
-// typename std::enable_if<hasLength<R>::value, size_t>::type lengthOf (R r) {
-// 	return r.length();
-// }
-
 void rangeTests () {
 	std::array<uint8_t, 32> a;
 	for (size_t i = 0; i < a.size(); ++i) a[i] = static_cast<uint8_t>((i * 2) + 1);
@@ -98,10 +54,6 @@ void rangeTests () {
 
 	g.popFrontN(30);
 	assert(g.size() == e.size() - 30);
-	std::array<uint8_t, 4> xx;
-	for (auto i = 0; i < 4; ++i) {
-		xx[i] = static_cast<uint8_t>((i + 1) * 10);
-	}
 
 	auto h = range(g);
 	assert(h.size() == g.size());
@@ -119,16 +71,22 @@ void rangeTests () {
 		assert(i.back() == i.size());
 	}
 	assert(rrr.size() == ccc.size());
+
+	std::array<uint8_t, 4> yy;
+	range(yy).put(range(ccc));
 }
 
 void retroTests () {
-// 	std::array<uint8_t, 4> yy;
-// 	std::array<uint8_t, 4> yy2;
+	std::array<uint8_t, 4> xx;
+	for (auto i = 0; i < 4; ++i) {
+		xx[i] = static_cast<uint8_t>((i + 1) * 10);
+	}
+
+	std::array<uint8_t, 4> yy;
+	retro(range(yy)).put(retro(range(xx)));
+
 // 	std::array<uint8_t, 4> zz;
 // 	std::array<uint8_t, 4> zz2;
-//
-// 	range(yy).put(range(xx));
-// 	retro(range(yy2)).put(retro(range(xx)));
 //
 // 	range(zz).put(retro(range(xx)));
 // 	retro(range(zz2)).put(range(xx));
