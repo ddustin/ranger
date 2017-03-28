@@ -41,7 +41,7 @@ template <typename I>
 struct Range {
 public:
 	using iterator = I;
-	using const_iterator = I; // re-evaluate, this is [probably] not safe __at_all__
+	using const_iterator = typename std::add_const<I>::type; // re-evaluate, this is [probably] not safe __at_all__
 	using reverse_iterator = std::reverse_iterator<iterator>;
 	using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 	using value_type = typename std::remove_reference<decltype(*I())>::type;
