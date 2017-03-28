@@ -59,12 +59,12 @@ namespace __ranger {
 		void popBack () { this->popBackN(1); }
 		void popBackN (size_t n) {
 			assert(n <= this->size());
-			this->_end = std::prev(this->_end, n);
+			std::advance(this->_end, -n);
 		}
 		void popFront () { this->popFrontN(1); }
 		void popFrontN (size_t n) {
 			assert(n <= this->size());
-			this->_begin = std::next(this->_begin, n);
+			std::advance(this->_begin, n);
 		}
 
 		template <typename E>
