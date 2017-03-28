@@ -92,17 +92,6 @@ public:
 };
 
 template <typename R>
-auto retro (R& r) {
-	using reverse_iterator = typename std::conditional<
-		std::is_const<R>::value,
-		typename R::const_reverse_iterator,
-		typename R::reverse_iterator
-	>::type;
-
-	return Range<reverse_iterator>(reverse_iterator(r.end()), reverse_iterator(r.begin()));
-}
-
-template <typename R>
 auto range (R& r) {
 	using iterator = typename std::conditional<
 		std::is_const<R>::value,
@@ -113,6 +102,17 @@ auto range (R& r) {
 	return Range<iterator>(r.begin(), r.end());
 }
 
+template <typename R>
+auto retro (R& r) {
+	using reverse_iterator = typename std::conditional<
+		std::is_const<R>::value,
+		typename R::const_reverse_iterator,
+		typename R::reverse_iterator
+	>::type;
+
+	return Range<reverse_iterator>(reverse_iterator(r.end()), reverse_iterator(r.begin()));
+}
+
 // rvalue references wrappers
-template <typename R> auto retro (R&& r) { return retro<R>(r); }
 template <typename R> auto range (R&& r) { return range<R>(r); }
+template <typename R> auto retro (R&& r) { return retro<R>(r); }
