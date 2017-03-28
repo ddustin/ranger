@@ -1,10 +1,7 @@
 #pragma once
 
-#include <algorithm>
 #include <cassert>
-#include <cstdint>
-#include <cstring>
-#include <memory>
+#include <type_traits>
 
 namespace ranger {
 	template <typename R>
@@ -30,8 +27,8 @@ namespace ranger {
 	}
 
 	// TODO
-// 	template <typename R>
-// 	void put <R, typename R::value_type> (R& r, typename R::value_type e) {
+// 	template <typename R, typename E = typename R::value_type>
+// 	void put (R& r, typename R::value_type e) {
 // 		r.front() = e;
 // 		r.popFront();
 // 	}
@@ -41,9 +38,7 @@ template <typename I>
 struct Range {
 public:
 	using iterator = I;
-	using const_iterator = typename std::add_const<I>::type; // re-evaluate, this is [probably] not safe __at_all__
-	using reverse_iterator = std::reverse_iterator<iterator>;
-	using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+	using const_iterator = I; // re-evaluate, this is [probably] not safe __at_all__
 	using value_type = typename std::remove_reference<decltype(*I())>::type;
 
 private:
@@ -104,11 +99,7 @@ auto range (R& r) {
 
 template <typename R>
 auto retro (R& r) {
-	using reverse_iterator = typename std::conditional<
-		std::is_const<R>::value,
-		typename R::const_reverse_iterator,
-		typename R::reverse_iterator
-	>::type;
+	using reverse_iterator = std::reverse_iterator<typename R::iterator>;
 
 	return Range<reverse_iterator>(reverse_iterator(r.end()), reverse_iterator(r.begin()));
 }

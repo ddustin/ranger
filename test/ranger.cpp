@@ -1,5 +1,6 @@
 #include <array>
 #include <cassert>
+#include <cstring>
 #include <iostream>
 #include <type_traits>
 #include <vector>
