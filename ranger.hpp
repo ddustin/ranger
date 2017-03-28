@@ -37,32 +37,20 @@ namespace ranger {
 // 	}
 }
 
-template <typename R, typename I>
+template <typename I>
 struct Range {
-private:
-	static constexpr auto IS_CONST = std::is_const<R>::value;
-	static constexpr auto IS_REVERSED =
-		std::is_same<I, typename R::reverse_iterator>::value ||
-		std::is_same<I, typename R::const_reverse_iterator>::value;
-
 public:
 	using iterator = I;
-	using const_iterator = typename std::conditional<
-		IS_CONST,
-		I,
-		typename std::conditional<IS_REVERSED, typename R::const_reverse_iterator, typename R::const_iterator>::type
-	>::type;
-
+	using const_iterator = I; // re-evaluate, this is [probably] not safe __at_all__
 	using reverse_iterator = std::reverse_iterator<iterator>;
 	using const_reverse_iterator = std::reverse_iterator<const_iterator>;
-	using value_type = typename R::value_type;
+	using value_type = typename std::remove_reference<decltype(*I())>::type;
 
 private:
 	iterator _begin;
 	iterator _end;
 
 public:
-	Range (R& r) : _begin(r.begin()), _end(r.end()) {}
 	Range (iterator begin, iterator end) : _begin(begin), _end(end) {}
 
 	auto begin () const { return this->_begin; }
@@ -105,20 +93,13 @@ public:
 
 template <typename R>
 auto retro (R& r) {
-// TODO: why not?
-// 	using reverse_iterator = typename std::conditional<
-// 		std::is_const<R>::value,
-// 		typename R::const_reverse_iterator,
-// 		typename R::reverse_iterator
-// 	>::type;
-	using iterator = typename std::conditional<
+	using reverse_iterator = typename std::conditional<
 		std::is_const<R>::value,
-		typename R::const_iterator,
-		typename R::iterator
+		typename R::const_reverse_iterator,
+		typename R::reverse_iterator
 	>::type;
-	using reverse_iterator = std::reverse_iterator<iterator>;
 
-	return Range<R, reverse_iterator>(reverse_iterator(r.end()), reverse_iterator(r.begin()));
+	return Range<reverse_iterator>(reverse_iterator(r.end()), reverse_iterator(r.begin()));
 }
 
 template <typename R>
@@ -129,7 +110,7 @@ auto range (R& r) {
 		typename R::iterator
 	>::type;
 
-	return Range<R, iterator>(r.begin(), r.end());
+	return Range<iterator>(r.begin(), r.end());
 }
 
 // rvalue references wrappers
