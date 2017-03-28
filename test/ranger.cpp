@@ -164,14 +164,22 @@ void serialTests () {
 }
 
 void otherUsageTests () {
-	std::map<int, int> vs;
-	vs[0] = 4;
-	vs[1] = 9;
+	std::map<char, int> vs;
+	vs['x'] = 3;
+	vs['y'] = 44;
+	vs['z'] = 555;
 
 	auto rm = range(vs);
 	for (auto i = rm; !i.empty(); i.popFront()) {
-		printf("%i %i\n", i.front().first, i.front().second);
+		printf("%c %i\n", i.front().first, i.front().second);
 	}
+
+	assert(rm[0].second == 3);
+	assert(rm[1].second == 44);
+	assert(rm[2].second == 555);
+
+	// boom (fails on size assertion)
+// 	assert(rm[4].second == 3);
 }
 
 int main () {

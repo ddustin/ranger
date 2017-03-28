@@ -73,12 +73,12 @@ namespace __ranger {
 
 		auto& operator[] (const size_t i) {
 			assert(i < this->size());
-			return *(this->_begin + i);
+			return *std::next(this->_begin, i);
 		}
 
 		auto operator[] (const size_t i) const {
 			assert(i < this->size());
-			return *(this->_begin + i);
+			return *std::next(this->_begin, i);
 		}
 
 		template <typename E>
