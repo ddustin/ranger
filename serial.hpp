@@ -33,16 +33,7 @@ namespace serial {
 	}
 
 	template <typename E, bool BE = false, typename R>
-	auto read (R& r) {
-		using T = typename R::value_type;
-
-		const auto e = peek<E, BE, R>(r);
-		r.popFrontN(sizeof(E) / sizeof(T));
-		return e;
-	}
-
-	template <typename E, bool BE = false, typename R>
-	void write (R& r, const E e) {
+	void put (R& r, const E e) {
 		using T = typename R::value_type;
 
 		static_assert(std::is_same<T, uint8_t>::value);
@@ -52,6 +43,28 @@ namespace serial {
 		auto ptr = reinterpret_cast<E*>(r.begin());
 		*ptr = e;
 		if (BE) reverseBytes(ptr);
+	}
+
+	template <typename E, bool BE = false, typename R>
+	void put (R&& r, const E e) { put<E, BE, R>(r, e); }
+
+	template <typename E, bool BE = false, typename R>
+	auto read (R& r) {
+		using T = typename R::value_type;
+
+		const auto e = peek<E, BE, R>(r);
+		r.popFrontN(sizeof(E) / sizeof(T));
+		return e;
+	}
+
+	template <typename E, bool BE = false, typename R>
+	auto read (R&& r) { return read<E, BE, R>(r); }
+
+	template <typename E, bool BE = false, typename R>
+	void write (R& r, const E e) {
+		using T = typename R::value_type;
+
+		put<E, BE, R>(r, e);
 		r.popFrontN(sizeof(E) / sizeof(T));
 	}
 

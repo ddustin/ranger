@@ -161,6 +161,13 @@ void serialTests () {
 	serial::write<int16_t>(rr, 2048);
 	assert(serial::peek<int16_t>(a) == 2048);
 	assert(rr.size() == 2);
+
+	assert(serial::read<int16_t>(range(a)) == 2048);
+	serial::write<int16_t>(range(a), 420);
+	assert(serial::peek<int16_t>(a) == 420);
+
+	serial::put<int16_t>(a, 890);
+	assert(serial::peek<int16_t>(a) == 890);
 }
 
 void otherUsageTests () {
