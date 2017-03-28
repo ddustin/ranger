@@ -53,9 +53,7 @@
 
 int main () {
 	std::array<uint8_t, 32> a;
-	range(a).put(iota<uint8_t>(0, 32, 1));
-	range(a).put(iota<uint8_t>(1, 33, 1));
-	range(a).put(iota<uint8_t>(1, 64, 2));
+	for (size_t i = 0; i < a.size(); ++i) a[i] = static_cast<uint8_t>((i * 2) + 1);
 
 // 	for (auto i = range(a); !i.empty(); i.popFront()) {
 // 		printf("%i ", i.front());
@@ -124,8 +122,10 @@ int main () {
 		assert(zz2[i] == xx[3 - i]);
 	}
 
-	assert(iota(0, 20, 1).take(10).back() == 9);
-	assert(iota(0, 20, 1).drop(10).front() == 10);
+	const std::array<uint8_t, 4> ccc = {1, 2, 3, 4};
+	for (auto i = range(ccc); !i.empty(); i.popBack()) {
+		assert(i.back() == i.size());
+	}
 
 // 	std::cout << "Foo isInputRange: " << isInputRange<Foo>() << std::endl;
 // 	std::cout << "Bar isInputRange: " << isInputRange<Bar>() << std::endl;
