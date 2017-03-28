@@ -87,11 +87,7 @@ public:
 
 template <typename R>
 auto range (R& r) {
-	using iterator = typename std::conditional<
-		std::is_const<R>::value,
-		decltype(r.begin()),
-		typename R::iterator
-	>::type;
+	using iterator = decltype(r.begin());
 
 	return Range<iterator>(r.begin(), r.end());
 }
