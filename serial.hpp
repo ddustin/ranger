@@ -18,10 +18,11 @@ namespace {
 }
 
 namespace serial {
-	template <typename E, bool BE = false>
-	auto peek (const Slice& r) {
-		using T = typename Slice::value_type;
+	template <typename E, bool BE = false, typename R>
+	auto peek (const R& r) {
+		using T = typename R::value_type;
 
+		static_assert(std::is_same<T, uint8_t>::value);
 		static_assert(sizeof(E) % sizeof(T) == 0);
 		assert((sizeof(E) / sizeof(T)) <= r.size());
 
@@ -31,19 +32,20 @@ namespace serial {
 		return value;
 	}
 
-	template <typename E, bool BE = false>
-	auto read (Slice& r) {
-		using T = typename Slice::value_type;
+	template <typename E, bool BE = false, typename R>
+	auto read (R& r) {
+		using T = typename R::value_type;
 
-		const auto e = peek<E, BE>(r);
+		const auto e = peek<E, BE, R>(r);
 		r.popFrontN(sizeof(E) / sizeof(T));
 		return e;
 	}
 
-	template <typename E, bool BE = false>
-	void write (Slice& r, const E e) {
-		using T = typename Slice::value_type;
+	template <typename E, bool BE = false, typename R>
+	void write (R& r, const E e) {
+		using T = typename R::value_type;
 
+		static_assert(std::is_same<T, uint8_t>::value);
 		static_assert(sizeof(E) % sizeof(T) == 0);
 		assert((sizeof(E) / sizeof(T)) <= r.size());
 
@@ -53,6 +55,6 @@ namespace serial {
 		r.popFrontN(sizeof(E) / sizeof(T));
 	}
 
-	template <typename E, bool BE = false>
-	void write (Slice&& r, const E e) { write<E, BE>(r, e); }
+	template <typename E, bool BE = false, typename R>
+	void write (R&& r, const E e) { write<E, BE, R>(r, e); }
 }

@@ -4,16 +4,16 @@ IFLAGS=
 LFLAGS=
 OFLAGS=
 
-SOURCES=test/slice.cpp test/ranger.cpp
+SOURCES=test/ranger.cpp
 OBJECTS=$(addsuffix .o, $(basename $(SOURCES)))
 DEPENDENCIES=$(OBJECTS:.o=.d)
 
 # COMMANDS
-test: test/slice
-	./test/slice
+test: test/ranger
+	./test/ranger
 
 clean:
-	$(RM) $(DEPENDENCIES) $(OBJECTS) test/ranger test/slice
+	$(RM) $(DEPENDENCIES) $(OBJECTS) test/ranger
 
 # INFERENCES
 %.o: %.cpp
@@ -24,7 +24,6 @@ clean:
 #	curl https://raw.githubusercontent.com/philsquared/Catch/master/single_include/catch.hpp > test/catch.hpp
 
 test/ranger: $(OBJECTS)
-test/slice: $(OBJECTS)
 	$(CXX) $(OBJECTS) $(LFLAGS) $(OFLAGS) -o $@
 
 -include $(DEPENDENCIES)

@@ -38,22 +38,17 @@ namespace ranger {
 // 	}
 }
 
-template <typename T>
-struct TypedSlice {
+template <typename R>
+struct Range {
+	using iterator = typename R::iterator;
+	using value_type = typename R::value_type;
+
 private:
-	T* _begin;
-	T* _end;
+	iterator _begin;
+	iterator _end;
 
 public:
-	using value_type = T;
-
-	TypedSlice () : _begin(nullptr), _end(nullptr) {}
-	TypedSlice (T* begin, T* end) : _begin(begin), _end(end) {
-		assert(this->_begin != nullptr);
-		assert(this->_end != nullptr);
-	}
-	template <typename R>
-	TypedSlice (R& range) : _begin(range.begin()), _end(range.end()) {}
+	Range (R& r) : _begin(r.begin()), _end(r.end()) {}
 
 	auto begin () { return this->_begin; }
 	auto end () { return this->_end; }
@@ -62,8 +57,8 @@ public:
 	auto empty () const { return this->_begin == this->_end; }
 	auto size () const { return static_cast<size_t>(this->_end - this->_begin); }
 
-	auto& front () { return (*this)[0]; }
-	auto& back () { return (*this)[this->size() - 1]; }
+	auto& front () { return *_begin; }
+	auto& back () { return *(_end - 1); }
 
 	auto drop (size_t n) const { return ranger::drop(*this, n); }
 	auto take (size_t n) const { return ranger::take(*this, n); }
@@ -73,16 +68,16 @@ public:
 
 	auto& operator[] (const size_t i) {
 		assert(i < this->size());
-		return this->_begin[i];
+		return *(this->_begin + i);
 	}
 
 	auto operator[] (const size_t i) const {
 		assert(i < this->size());
-		return this->_begin[i];
+		return *(this->_begin + i);
 	}
 
-	template <typename R>
-	auto operator< (const R& rhs) const {
+	template <typename E>
+	auto operator< (const E& rhs) const {
 		return std::lexicographical_compare(this->begin(), this->end(), rhs.begin(), rhs.end());
 	}
 
@@ -99,8 +94,6 @@ public:
 	void popBack () { this->popBackN(1); }
 	void popFront () { this->popFrontN(1); }
 };
-
-typedef TypedSlice<uint8_t> Slice;
 
 template <typename R>
 struct RetroRange {
@@ -147,16 +140,108 @@ public:
 	void popFront () { this->popFrontN(1); }
 };
 
+// TODO: generic sequence
+template <typename T>
+struct Iota {
+private:
+	T _current;
+	T _pastLast;
+	T _step;
+
+public:
+	Iota (T current, T pastLast, T step = 1) {
+		if ((current < pastLast && step >= 0) || (current > pastLast && step <= 0)) {
+			this->_current = current;
+			this->_pastLast = pastLast;
+			this->_step = step;
+
+			if (step > 0) {
+				assert(this->size() <= std::numeric_limits<size_t>::max());
+
+				this->_pastLast = static_cast<T>(pastLast - 1);
+				this->_pastLast = static_cast<T>(this->_pastLast - ((this->_pastLast - current) % step));
+			} else {
+				assert(this->size() <= std::numeric_limits<size_t>::max());
+
+				this->_pastLast = static_cast<T>(pastLast + 1);
+				this->_pastLast = static_cast<T>(this->_pastLast + ((current - this->_pastLast) % -step));
+			}
+
+			this->_pastLast = static_cast<T>(this->_pastLast + step);
+
+		// empty range
+		} else {
+			this->_current = this->_pastLast = current;
+			this->_step = 1;
+		}
+	}
+
+	auto empty () const { return this->_current == this->_pastLast; }
+	auto& front () {
+		assert(!this->empty());
+		return this->_current;
+	}
+
+	auto& back () {
+		assert(!this->empty());
+		return this->_pastLast - this->_step;
+	}
+
+	void popBackN (size_t n) {
+		assert(n <= this->size());
+		this->_pastLast = static_cast<T>(this->_pastLast - (this->_step * n));
+	}
+
+	void popFrontN (size_t n) {
+		assert(n <= this->size());
+		this->_current = static_cast<T>(this->_current + (this->_step * n));
+	}
+
+	void popBack () { this->popBackN(1); }
+	void popFront () { this->popFrontN(1); }
+
+	auto drop (size_t n) const { return ranger::drop(*this, n); }
+	auto take (size_t n) const { return ranger::take(*this, n); }
+
+	size_t size () const {
+		if (this->_step > 0) {
+			return static_cast<size_t>((this->_pastLast - this->_current) / this->_step);
+		} else {
+			return static_cast<size_t>((this->_current - this->_pastLast) / -this->_step);
+		}
+	}
+};
+
+template <typename T>
+auto iota (T current, T pastLast, T step) {
+	return Iota<T>(current, pastLast, step);
+}
+
 template <typename R>
-auto retro (const R r) {
+auto retro (R& r) {
 	return RetroRange<R>(r);
 }
 
-namespace ranger {
-	template <>
-	void put <Slice, Slice> (Slice& r, const Slice e) {
-		assert(r.size() >= e.size());
-		memcpy(r.begin(), e.begin(), e.size());
-		r.popFrontN(e.size());
-	}
+template <typename R>
+auto retro (R&& r) {
+	return retro<R>(r);
 }
+
+template <typename R>
+auto range (R& r) {
+	return Range<R>(r);
+}
+
+template <typename R>
+auto range (R&& r) {
+	return range<R>(r);
+}
+
+// namespace ranger {
+// 	template <>
+// 	void put <Slice, Slice> (Slice& r, const Slice e) {
+// 		assert(r.size() >= e.size());
+// 		memcpy(r.begin(), e.begin(), e.size());
+// 		r.popFrontN(e.size());
+// 	}
+// }
