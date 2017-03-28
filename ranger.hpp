@@ -55,8 +55,8 @@ namespace __ranger {
 			return static_cast<size_t>(diff);
 		}
 		auto take (size_t n) const { return __ranger::take(*this, n); }
-		auto& back () { return *(_end - 1); }
-		auto& front () { return *_begin; }
+		auto& back () { return *(this->_end - 1); }
+		auto& front () { return *this->_begin; }
 		void popBack () { this->popBackN(1); }
 		void popBackN (size_t n) {
 			assert(n <= this->size());
