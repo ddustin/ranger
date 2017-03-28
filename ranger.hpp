@@ -94,7 +94,7 @@ auto range (R& r) {
 
 template <typename R>
 auto retro (R& r) {
-	using reverse_iterator = std::reverse_iterator<typename R::iterator>;
+	using reverse_iterator = std::reverse_iterator<decltype(r.begin())>;
 
 	return Range<reverse_iterator>(reverse_iterator(r.end()), reverse_iterator(r.begin()));
 }

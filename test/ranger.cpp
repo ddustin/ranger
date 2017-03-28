@@ -110,6 +110,14 @@ void retroTests () {
 		assert((i.back() + 1u) == i.size());
 	}
 
+	retro(retro(retro(retro(retro(retro(yy)))))).put(range(xx));
+	for (auto i = range(yy); !i.empty(); i.popBack()) {
+		assert((i.back() + 1u) == i.size());
+	}
+
+// 	const auto zz = yy;
+// 	memcpy(zz.begin(), xx.begin(), zz.size());
+
 	yy = {9,9,9,9}; // reset
 	auto mm = retro(yy).drop(1);
 	range(mm).put(range(xx).drop(1));
