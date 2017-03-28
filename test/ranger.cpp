@@ -7,12 +7,17 @@
 #include "../slice.hpp"
 #include "../serial.hpp"
 
+template <typename R>
+void printr (const R r) {
+	for (auto i = r; !i.empty(); i.popFront()) {
+		printf("%i ", i.front());
+	}
+	printf("\n");
+}
+
 void rangeTests () {
 	std::array<uint8_t, 32> a;
 	for (size_t i = 0; i < a.size(); ++i) a[i] = static_cast<uint8_t>((i * 2) + 1);
-
-	for (auto i = range(a); !i.empty(); i.popFront()) printf("%i ", i.front());
-	printf("\n");
 
 	auto b = range(a).drop(10);
 	assert(a.size() == 32);
@@ -77,14 +82,25 @@ void rangeTests () {
 }
 
 void retroTests () {
-	std::array<uint8_t, 4> xx;
-	for (auto i = 0; i < 4; ++i) {
-		xx[i] = static_cast<uint8_t>((i + 1) * 10);
-	}
+	std::array<uint8_t, 4> xx = {0, 1, 2, 3};
+	std::array<uint8_t, 4> yy = {0};
 
-	std::array<uint8_t, 4> yy;
-	retro(range(yy)).put(retro(range(xx)));
+	range(yy).put(retro(xx));
+// 	for (auto i = range(yy); !i.empty(); i.popFront()) {
+// 		assert((i.front() + 1u) == i.size());
+// 	}
+//
+// 	yy = {0}; // reset
+// 	retro(yy).put(range(xx));
+// 	for (auto i = range(yy); !i.empty(); i.popFront()) {
+// 		assert((i.front() + 1u) == i.size());
+// 	}
 
+// 	printr(range(yy));
+// 	printr(retro(retro(yy)));
+
+// 	retro(range(yy)).put(retro(range(xx)));
+// 	range(yy).put(retro(range(xx)));
 // 	std::array<uint8_t, 4> zz;
 // 	std::array<uint8_t, 4> zz2;
 //
@@ -105,7 +121,7 @@ void retroTests () {
 }
 
 int main () {
-	rangeTests();
+// 	rangeTests();
 	retroTests();
 
 	return 0;

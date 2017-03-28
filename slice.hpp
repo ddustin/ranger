@@ -102,11 +102,15 @@ template <typename R>
 auto retro (R& r) {
 	using iterator = typename std::conditional<
 		std::is_const<R>::value,
-		typename R::const_reverse_iterator,
-		typename R::reverse_iterator
+		typename R::const_iterator,
+		typename R::iterator
 	>::type;
+	using reverse_iterator = std::reverse_iterator<iterator>;
 
-	return Range<R, iterator>(r.rbegin(), r.rend());
+	return Range<R, reverse_iterator>(
+		reverse_iterator(r.begin()),
+		reverse_iterator(r.end())
+	);
 }
 
 template <typename R>
@@ -129,12 +133,3 @@ template <typename R>
 auto range (R&& r) {
 	return range<R>(r);
 }
-
-// namespace ranger {
-// 	template <>
-// 	void put <Slice, Slice> (Slice& r, const Slice e) {
-// 		assert(r.size() >= e.size());
-// 		memcpy(r.begin(), e.begin(), e.size());
-// 		r.popFrontN(e.size());
-// 	}
-// }
