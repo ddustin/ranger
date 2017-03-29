@@ -4,7 +4,6 @@
 #include <iostream>
 #include <list>
 #include <map>
-#include <openssl/sha.h>
 #include <type_traits>
 #include <vector>
 
@@ -235,11 +234,7 @@ void overloadTests () {
 	assert(xr.size() == 32);
 	assert(xr.back() == 0xff);
 
-	SHA256_CTX context;
-	SHA256_Init(&context);
-	SHA256_Update(&context, xr.begin(), xr.size());
-	SHA256_Final(xr.begin(), &context);
-	printr(xr);
+	memcpy(xr.begin(), xr.begin(), xr.size());
 }
 
 int main () {

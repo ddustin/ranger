@@ -24,6 +24,6 @@ clean:
 #	curl https://raw.githubusercontent.com/philsquared/Catch/master/single_include/catch.hpp > test/catch.hpp
 
 test/ranger: $(OBJECTS)
-	$(CXX) $(OBJECTS) $(LFLAGS) $(OFLAGS) -lcrypto -o $@
+	$(CXX) $(OBJECTS) $(LFLAGS) $(OFLAGS) -o $@
 
 -include $(DEPENDENCIES)
