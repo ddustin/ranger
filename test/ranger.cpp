@@ -229,12 +229,23 @@ void otherUsageTests () {
 
 void overloadTests () {
 // 	std::array<uint8_t, 10> x;
-	std::vector<uint8_t> x(32, 0xff);
+	std::vector<uint8_t> x = {1, 2, 3, 4};
 	auto xr = ptr_range(x);
-	assert(xr.size() == 32);
-	assert(xr.back() == 0xff);
+	assert(xr.size() == 4);
+	assert(xr.back() == 4);
 
 	memcpy(xr.begin(), xr.begin(), xr.size());
+
+	auto rxr = retro(xr);
+	while (!rxr.empty()) {
+		assert(rxr.back() == xr.front());
+
+		xr.popFront();
+		rxr.popBack();
+	}
+
+	assert(xr.size() == 0);
+	assert(rxr.size() == 0);
 }
 
 int main () {
