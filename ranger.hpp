@@ -111,4 +111,5 @@ auto retro (R& r) {
 
 // rvalue references wrappers
 template <typename R> auto range (R&& r) { return range<R>(r); }
+template <typename R> auto ptr_range (R&& r) { return ptr_range<R>(r); }
 template <typename R> auto retro (R&& r) { return retro<R>(r); }
