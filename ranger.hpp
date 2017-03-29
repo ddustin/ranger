@@ -96,6 +96,13 @@ auto range (R& r) {
 }
 
 template <typename R>
+auto ptr_range (R& r) {
+	using pointer = decltype(r.data());
+
+	return __ranger::Range<pointer>(r.data(), r.data() + r.size());
+}
+
+template <typename R>
 auto retro (R& r) {
 	using reverse_iterator = std::reverse_iterator<decltype(r.begin())>;
 

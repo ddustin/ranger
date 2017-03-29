@@ -4,6 +4,7 @@
 #include <iostream>
 #include <list>
 #include <map>
+#include <openssl/sha.h>
 #include <type_traits>
 #include <vector>
 
@@ -227,12 +228,27 @@ void otherUsageTests () {
 	}
 }
 
+void overloadTests () {
+// 	std::array<uint8_t, 10> x;
+	std::vector<uint8_t> x(32, 0xff);
+	auto xr = ptr_range(x);
+	assert(xr.size() == 32);
+	assert(xr.back() == 0xff);
+
+	SHA256_CTX context;
+	SHA256_Init(&context);
+	SHA256_Update(&context, xr.begin(), xr.size());
+	SHA256_Final(xr.begin(), &context);
+	printr(xr);
+}
+
 int main () {
 	rangeTests();
 	rangeTests2();
 	retroTests();
 	serialTests();
 	otherUsageTests();
+	overloadTests();
 
 	return 0;
 }
