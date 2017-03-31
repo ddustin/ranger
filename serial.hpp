@@ -34,7 +34,7 @@ namespace serial {
 	}
 
 	template <typename E, bool BE = false, typename R>
-	void put (R& r, const E e) {
+	void place (R& r, const E e) {
 		using T = typename R::value_type;
 
 		static_assert(std::is_same<T, uint8_t>::value);
@@ -63,15 +63,15 @@ namespace serial {
 	}
 
 	template <typename E, bool BE = false, typename R>
-	void write (R& r, const E e) {
+	void put (R& r, const E e) {
 		using T = typename R::value_type;
 
-		put<E, BE, R>(r, e);
+		place<E, BE, R>(r, e);
 		r.popFrontN(sizeof(E) / sizeof(T));
 	}
 
 	// rvalue references wrappers
-	template <typename E, bool BE = false, typename R> void put (R&& r, const E e) { put<E, BE, R>(r, e); }
+	template <typename E, bool BE = false, typename R> void place (R&& r, const E e) { place<E, BE, R>(r, e); }
 	template <typename E, bool BE = false, typename R> auto read (R&& r) { return read<E, BE, R>(r); }
-	template <typename E, bool BE = false, typename R> void write (R&& r, const E e) { write<E, BE, R>(r, e); }
+	template <typename E, bool BE = false, typename R> void put (R&& r, const E e) { put<E, BE, R>(r, e); }
 }

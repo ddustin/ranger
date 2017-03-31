@@ -159,15 +159,15 @@ void serialTests () {
 
 	auto rr = range(a);
 	assert(rr.size() == 4);
-	serial::write<int16_t>(rr, 2048);
+	serial::put<int16_t>(rr, 2048);
 	assert(serial::peek<int16_t>(a) == 2048);
 	assert(rr.size() == 2);
 
 	assert(serial::read<int16_t>(range(a)) == 2048);
-	serial::write<int16_t>(range(a), 420);
+	serial::put<int16_t>(range(a), 420);
 	assert(serial::peek<int16_t>(a) == 420);
 
-	serial::put<int16_t>(a, 890);
+	serial::place<int16_t>(a, 890);
 	assert(serial::peek<int16_t>(a) == 890);
 
 	uint32_t mantissa = 0x90ffccde;
@@ -180,7 +180,7 @@ void serialTests () {
 	assert(em == mantissa);
 
 	std::array<uint8_t, 4> actual = {};
-	serial::put<uint32_t, true>(actual, mantissa);
+	serial::place<uint32_t, true>(actual, mantissa);
 	const auto am = serial::peek<uint32_t, true>(actual);
 	assert(am == mantissa);
 
@@ -217,7 +217,7 @@ void otherUsageTests () {
 	ls.push_back(0);
 	ls.push_back(0);
 
-	serial::put<uint64_t>(range(ls), h);
+	serial::place<uint64_t>(range(ls), h);
 	// compare, byte for byte again h
 	size_t i = 0;
 	for (auto x = ls.begin(); x != ls.end(); ++x) {
