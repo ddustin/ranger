@@ -246,15 +246,37 @@ void overloadTests () {
 
 	assert(xr.size() == 0);
 	assert(rxr.size() == 0);
+
+	// TODO
+// 	xr.put(10);
+}
+
+void sortedTests () {
+	std::vector<uint8_t> x = {1, 2, 3, 4};
+
+	auto s = assumeSorted(x);
+	assert(s.contains(1));
+	assert(s.contains(3));
+	assert(s.contains(4));
+	assert(!s.contains(0));
+	assert(!s.contains(5));
+	assert(s.lowerBound(5) == s.end());
+
+	// !!! invalidates `s`!
+	assert(x.begin() == s.begin());
+	x.emplace(s.lowerBound(5), 240);
+	assert(x.begin() != s.begin());
 }
 
 int main () {
+	sortedTests();
 	rangeTests();
 	rangeTests2();
 	retroTests();
 	serialTests();
 	otherUsageTests();
 	overloadTests();
+	sortedTests();
 
 	return 0;
 }
