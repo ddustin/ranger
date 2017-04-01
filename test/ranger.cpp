@@ -72,14 +72,10 @@ void rangeTests2 () {
 	assert(i.size() == g.size());
 
 	const std::array<uint8_t, 4> ccc = {0, 1, 2, 3};
-	for (auto i = range(ccc); !i.empty(); i.popBack()) {
-		assert((i.back() + 1u) == i.size());
-	}
+	assert(range(ccc) == ccc);
 
 	const auto rrr = range(ccc);
-	for (auto i = rrr; !i.empty(); i.popBack()) {
-		assert((i.back() + 1u) == i.size());
-	}
+	assert(rrr == ccc);
 	assert(rrr.size() == ccc.size());
 
 	std::array<uint8_t, 4> yy;
@@ -90,34 +86,25 @@ void rangeTests2 () {
 }
 
 void retroTests () {
+	std::array<uint8_t, 4> expected = {3, 2, 1, 0};
 	std::array<uint8_t, 4> xx = {0, 1, 2, 3};
 	std::array<uint8_t, 4> yy = {0};
 
 	range(yy).put(retro(xx));
-	for (auto i = range(yy); !i.empty(); i.popFront()) {
-		assert((i.front() + 1u) == i.size());
-	}
+	assert(yy == expected);
 
 	yy = {0}; // reset
 	retro(yy).put(range(xx));
-	for (auto i = range(yy); !i.empty(); i.popFront()) {
-		assert((i.front() + 1u) == i.size());
-	}
+	assert(yy == expected);
 
 	retro(retro(yy)).put(retro(xx));
-	for (auto i = range(yy); !i.empty(); i.popFront()) {
-		assert((i.front() + 1u) == i.size());
-	}
+	assert(yy == expected);
 
 	memcpy(yy.begin(), xx.begin(), yy.size());
-	for (auto i = range(yy); !i.empty(); i.popBack()) {
-		assert((i.back() + 1u) == i.size());
-	}
+	assert(yy == xx);
 
-	retro(retro(retro(retro(retro(retro(yy)))))).put(range(xx));
-	for (auto i = range(yy); !i.empty(); i.popBack()) {
-		assert((i.back() + 1u) == i.size());
-	}
+	retro(retro(retro(retro(retro(retro(yy)))))).put(retro(range(xx)));
+	assert(yy == expected);
 
 // 	const auto zz = yy;
 // 	memcpy(zz.begin(), xx.begin(), zz.size());
@@ -266,6 +253,16 @@ void sortedTests () {
 	assert(x.begin() == s.begin());
 	x.emplace(s.lowerBound(5), 240);
 	assert(x.begin() != s.begin());
+
+	// safe again
+	s = assumeSorted(x);
+	assert(x.begin() == s.begin());
+
+	auto z = assumeSorted(x, [](auto a, auto b) {
+		return a < b;
+	});
+
+	assert(s == z);
 }
 
 int main () {

@@ -86,6 +86,11 @@ public:
 	auto operator< (const E& rhs) const {
 		return std::lexicographical_compare(this->begin(), this->end(), rhs.begin(), rhs.end());
 	}
+
+	template <typename E>
+	auto operator== (const E& rhs) const {
+		return std::equal(this->begin(), this->end(), rhs.begin(), rhs.end());
+	}
 };
 
 template <typename I, typename F>
