@@ -19,10 +19,6 @@ clean:
 %.o: %.cpp
 	$(CXX) $(CFLAGS) $(OFLAGS) $(IFLAGS) -MMD -MP -c $< -o $@
 
-# DEPENDENCIES
-#test/catch.hpp:
-#	curl https://raw.githubusercontent.com/philsquared/Catch/master/single_include/catch.hpp > test/catch.hpp
-
 test/ranger: $(OBJECTS)
 	$(CXX) $(OBJECTS) $(LFLAGS) $(OFLAGS) -o $@
 
