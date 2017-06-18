@@ -5,7 +5,6 @@ A modern, header-only, range library for C++.
 Inspiration/motivation from ranges in [D](https://dlang.org/phobos/std_range.html).
 
 ## Example
-None of these examples work... yet.
 
 ``` cpp
 #include <ranger/ranger.hpp>
