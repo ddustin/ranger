@@ -14,20 +14,18 @@ None of these examples work... yet.
 
 std::vector<int> numbers = {1, 2, 3};
 
-for (auto &x : ranger::reversed(numbers)) {
+for (auto &x : ranger::retro(numbers)) {
 	std::cout << x << ' ';
 }
 // 3, 2, 1
 
-auto a = ranger::slice(numbers, 0, 2); // {1, 2}
+auto a = ranger::range(numbers).take(2); // {1, 2}
 a[1] = 8;
 
 numbers.push_back(9);
 
-auto b = ranger::slice(numbers).drop(1); // {2, 8, 9}
-auto c = ranger::reversed(b); // {9, 8, 2}
-
-auto d = ranger::memory_slice(numbers);
+auto b = ranger::range(numbers).drop(1); // {2, 8, 9}
+auto c = ranger::retro(b); // {9, 8, 2}
 ```
 
 
