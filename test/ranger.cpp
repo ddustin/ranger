@@ -100,14 +100,14 @@ void retroTests () {
 	retro(retro(yy)).put(retro(xx));
 	assert(yy == expected);
 
-	memcpy(yy.begin(), xx.begin(), yy.size());
+	memmove(yy.begin(), xx.begin(), yy.size());
 	assert(yy == xx);
 
 	retro(retro(retro(retro(retro(retro(yy)))))).put(retro(range(xx)));
 	assert(yy == expected);
 
 // 	const auto zz = yy;
-// 	memcpy(zz.begin(), xx.begin(), zz.size());
+// 	memmove(zz.begin(), xx.begin(), zz.size());
 
 	yy = {9,9,9,9}; // reset
 	auto mm = retro(yy).drop(1);
@@ -221,7 +221,7 @@ void overloadTests () {
 	assert(xr.size() == 4);
 	assert(xr.back() == 4);
 
-	memcpy(xr.begin(), xr.begin(), xr.size());
+	memmove(xr.begin(), xr.begin(), xr.size());
 
 	auto rxr = retro(xr);
 	while (!rxr.empty()) {
