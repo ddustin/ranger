@@ -10,10 +10,10 @@
 #include "../ranger.hpp"
 #include "../serial.hpp"
 
-template <typename R>
+template <bool text = false, typename R>
 void printr (const R r) {
-	for (auto i = r; !i.empty(); i.popFront()) {
-		printf("%i ", i.front());
+	for (auto s = r; !s.empty(); s.popFront()) {
+		printf(text ? "%c" : "%i ", s.front());
 	}
 	printf("\n");
 }
@@ -188,6 +188,12 @@ void serialTests () {
 	serial::place<uint32_t, true>(actual, mantissa);
 	const auto am = serial::peek<uint32_t, true>(actual);
 	assert(am == mantissa);
+
+	printr<true>(zstr_range("foobar is foobar"));
+
+	std::array<char, 8> s = {'\0'};
+	range(s).put(zstr_range("hello"));
+	printr<true>(range(s));
 
 	assert(memcmp(expected.begin(), actual.begin(), actual.size()) == 0);
 	printr(range(actual));
