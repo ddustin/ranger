@@ -85,6 +85,24 @@ void rangeTests2 () {
 	assert(rrr2.size() == ccc.size());
 }
 
+// README-ish
+void rangeTests3 () {
+	std::vector<int> numbers = {1, 2, 3};
+
+	auto a = range(numbers).take(2); // {1, 2}
+	a[1] = 8;
+
+	auto b = a.take(2); //
+	assert(a.size() == 2);
+	assert(b.size() == 2);
+	a.popFrontN(2);
+	assert(a.size() == 0);
+	assert(b.size() == 2);
+	assert(b[0] == numbers[0]);
+	assert(b[1] == numbers[1]);
+// 	assert(b[2] == numbers[2]); // b.size() == 2, fails
+}
+
 void retroTests () {
 	std::array<uint8_t, 4> expected = {3, 2, 1, 0};
 	std::array<uint8_t, 4> xx = {0, 1, 2, 3};
@@ -269,6 +287,7 @@ int main () {
 	sortedTests();
 	rangeTests();
 	rangeTests2();
+	rangeTests3();
 	retroTests();
 	serialTests();
 	otherUsageTests();
