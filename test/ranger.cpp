@@ -208,8 +208,13 @@ void otherUsageTests () {
 
 	auto rm = range(vs);
 	for (auto i = rm; !i.empty(); i.popFront()) {
-		printf("%c %i\n", i.front().first, i.front().second);
+		printf("%c-%i ", i.front().first, i.front().second);
 	}
+
+	for (auto v : range(vs)) {
+		printf("v-%i ", v.first);
+	}
+	printf("\n");
 
 	assert(rm[0].second == 3);
 	assert(rm[1].second == 44);
