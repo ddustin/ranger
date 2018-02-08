@@ -42,7 +42,9 @@ private:
 	I _end;
 
 public:
-	using value_type = typename std::remove_reference<decltype(*I())>::type;
+	using value_type = typename std::remove_const<
+		typename std::remove_reference<decltype(*I())>::type
+	>::type;
 
 	Range (I begin, I end) : _begin(begin), _end(end) {}
 
