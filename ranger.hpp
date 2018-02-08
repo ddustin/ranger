@@ -69,6 +69,11 @@ public:
 		std::advance(this->_begin, n);
 	}
 
+	template <typename U=I>
+	typename std::enable_if<std::is_pointer<U>::value, I>::type data () {
+		return this->_begin;
+	}
+
 	template <typename E>
 	void put (E e) { return __ranger::put(*this, e); }
 

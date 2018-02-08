@@ -249,6 +249,8 @@ void overloadTests () {
 	auto xr = ptr_range(x);
 	assert(xr.size() == 4);
 	assert(xr.back() == 4);
+	assert(xr.begin() == xr.data());
+// 	range(x).data(); // FAILS :)
 
 	memmove(xr.begin(), xr.begin(), xr.size());
 
