@@ -19,14 +19,20 @@ auto take (R r, const size_t n) {
 	return std::move(r);
 }
 
-// TODO:
-// template <typename R>
-// void put (R& r, typename R::value_type e) {
-// 	r.front() = e;
-// 	r.popFront();
-// }
+template <typename R>
+void put (R& r, typename R::value_type e) {
+	r.front() = e;
+	r.popFront();
+}
 
-template <typename R, typename E>
+template <
+	typename R,
+	typename E,
+	typename V = typename std::enable_if<
+		std::is_same<typename R::value_type, typename E::value_type>::value,
+		E
+	>::type
+>
 void put (R& r, E e) {
 	while (!e.empty()) {
 		r.front() = e.front();

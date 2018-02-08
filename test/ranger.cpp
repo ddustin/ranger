@@ -296,12 +296,27 @@ void sortedTests () {
 	assert(s == z);
 }
 
+void putTests () {
+	std::vector<uint32_t> x = {1, 2, 3, 4};
+	auto save = range(x);
+
+	save.put(11);
+	save.put(9);
+	save.put(7);
+	save.put(5);
+	assert(x[0] == 11);
+	assert(x[1] == 9);
+	assert(x[2] == 7);
+	assert(x[3] == 5);
+}
+
 int main () {
-	sortedTests();
 	rangeTests();
 	rangeTests2();
 	rangeTests3();
 	retroTests();
+	putTests();
+	sortedTests();
 	serialTests();
 	otherUsageTests();
 	overloadTests();
