@@ -164,7 +164,7 @@ auto retro (R& r) {
 template <typename R, typename F>
 auto assumeSorted (R& r, const F& f) {
 	using iterator = decltype(r.begin());
-	assert(std::is_sorted(r.begin(), r.end(), f));
+	assert(std::is_sorted(r.begin(), r.end(), f)); // TODO: for debugging purposes only
 
 	return __ranger::SortedRange<iterator, F>(r.begin(), r.end(), f);
 }
