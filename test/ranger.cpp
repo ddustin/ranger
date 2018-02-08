@@ -118,14 +118,14 @@ void retroTests () {
 	retro(retro(yy)).put(retro(xx));
 	assert(yy == expected);
 
-	memmove(yy.begin(), xx.begin(), yy.size());
+	memmove(yy.data(), xx.data(), yy.size());
 	assert(yy == xx);
 
 	retro(retro(retro(retro(retro(retro(yy)))))).put(retro(range(xx)));
 	assert(yy == expected);
 
 // 	const auto zz = yy;
-// 	memmove(zz.begin(), xx.begin(), zz.size());
+// 	memmove(zz.data(), xx.data(), zz.size());
 
 	yy = {9,9,9,9}; // reset
 	auto mm = retro(yy).drop(1);
@@ -195,7 +195,7 @@ void serialTests () {
 	range(s).put(zstr_range("hello"));
 	printr<true>(range(s));
 
-	assert(memcmp(expected.begin(), actual.begin(), actual.size()) == 0);
+	assert(memcmp(expected.data(), actual.data(), actual.size()) == 0);
 	printr(range(actual));
 	printr(range(expected));
 }
@@ -252,7 +252,7 @@ void overloadTests () {
 	assert(xr.begin() == xr.data());
 // 	range(x).data(); // FAILS :)
 
-	memmove(xr.begin(), xr.begin(), xr.size());
+	memmove(xr.data(), xr.data(), xr.size());
 
 	auto rxr = retro(xr);
 	while (!rxr.empty()) {

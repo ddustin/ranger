@@ -75,7 +75,7 @@ public:
 	}
 
 	template <typename E>
-	void put (E e) { return __ranger::put(*this, e); }
+	void put (E e) { __ranger::put(*this, e); }
 
 	auto& operator[] (const size_t i) {
 		assert(i < this->size());
