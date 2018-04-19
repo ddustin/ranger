@@ -87,12 +87,16 @@ public:
 
 	auto& operator[] (const size_t i) {
 		assert(i < this->size());
-		return *std::next(this->_begin, i);
+		auto it = this->_begin;
+		std::advance(it, i);
+		return *it;
 	}
 
 	auto operator[] (const size_t i) const {
 		assert(i < this->size());
-		return *std::next(this->_begin, i);
+		auto it = this->_begin;
+		std::advance(it, i);
+		return *it;
 	}
 
 	template <typename E>

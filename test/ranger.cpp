@@ -303,10 +303,10 @@ void putTests () {
 	std::vector<uint32_t> x = {1, 2, 3, 4};
 	auto save = range(x);
 
-	save.put(11);
-	save.put(9);
-	save.put(7);
-	save.put(5);
+	save.put(11u);
+	save.put(9u);
+	save.put(7u);
+	save.put(5u);
 	assert(x[0] == 11);
 	assert(x[1] == 9);
 	assert(x[2] == 7);
