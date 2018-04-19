@@ -289,11 +289,14 @@ void sortedTests () {
 	s = assumeSorted(x);
 	assert(x.begin() == s.begin());
 
-	auto z = assumeSorted(x, [](auto a, auto b) {
+	const auto z = assumeSorted(x, [](auto a, auto b) {
 		return a < b;
 	});
-
 	assert(s == z);
+
+	assert(assumeSorted(range(x), [](auto a, auto b) {
+		return a < b;
+	}) == s);
 }
 
 void putTests () {

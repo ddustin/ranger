@@ -180,4 +180,4 @@ template <typename R> auto range (R&& r) { return range<R>(r); }
 template <typename R> auto ptr_range (R&& r) { return ptr_range<R>(r); }
 template <typename R> auto retro (R&& r) { return retro<R>(r); }
 template <typename R> auto assumeSorted (R&& r) { return assumeSorted<R>(r); }
-template <typename R, typename F> auto assumeSorted (R&& r, const F& f) { return assumeSorted<R, F>(r); }
+template <typename R, typename F> auto assumeSorted (R&& r, const F& f) { return assumeSorted<R, F>(r, f); }
