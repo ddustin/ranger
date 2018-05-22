@@ -1,4 +1,4 @@
-CXX=g++
+CXX=clang++
 CFLAGS=-std=c++1z -pedantic -W -Wall -Wcast-qual -Wconversion -Werror -Wextra -Wwrite-strings
 IFLAGS=
 LFLAGS=
