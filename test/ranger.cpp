@@ -195,6 +195,13 @@ void serialTests () {
 	range(s).put(zstr_range("hello"));
 	printr<true>(range(s));
 
+	std::array<uint8_t, 8> ss = {'\0'};
+	auto rss = range(ss);
+	for (auto x : zstr_range("hello")) {
+		rss.put(static_cast<uint8_t>(x));
+	}
+	printr<true>(range(ss));
+
 	assert(memcmp(expected.data(), actual.data(), actual.size()) == 0);
 	printr(range(actual));
 	printr(range(expected));
