@@ -28,4 +28,4 @@ auto c = ranger::retro(b); // {9, 8, 2}
 ```
 
 
-## LICENSE [ISC](LICENSE)
+## LICENSE [MIT](LICENSE)
